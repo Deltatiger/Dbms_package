@@ -1,0 +1,1 @@
+This is the package for a DBMS paper in College. This is an online shopping site with minimal GUI and maximum DBMS concepts.
