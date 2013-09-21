@@ -99,6 +99,6 @@ $sql = "CREATE TABLE dbms_payments (
             `payment_id`            int NULL AUTO_INCREMENT,
             `payment_time`          DATETIME DEFAULT NOW(),
             PRIMARY KEY (`payment_id`),
-            CONSTRAINT `Payment_Basket_UNIQUE` UNIQUE (`payment_basket_id`),
+            CONSTRAINT `Payment_Basket_UNIQUE` UNIQUE (`payment_basket_id`)
     );";
 ?>
