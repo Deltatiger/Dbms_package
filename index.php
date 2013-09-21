@@ -9,12 +9,11 @@
             //This is the main file.
             include 'includes/config.php';
             
-            $sql = "CREATE TABLE dbms_payments (
-            `payment_basket_id`     int NOT NULL,
+           $sql = "CREATE TABLE dbms_payments (
+            `payment_basket_id`     int NOT NULL UNIQUE,
             `payment_id`            int NULL AUTO_INCREMENT,
-            `payment_time`          DATETIME DEFAULT TIMESTAMP,
-            PRIMARY KEY (`payment_id`),
-            CONSTRAINT `Payment_Basket_UNIQUE` UNIQUE (`payment_basket_id`)
+            `payment_time`          DATETIME NOT NULL,
+            PRIMARY KEY (`payment_id`)
     );";
             $query = $db->query($sql);
             echo $query;
