@@ -57,8 +57,28 @@ class Session {
         }
     }
     
+    public function isLoggedIn()    {
+        if(isset($_SESSION['session_id']))  {
+            //We have a valid session.
+            global $db;
+            //We get the login status and return it.
+            $sessionId = $_SESSION['session_id'];
+            $sql = "SELECT `session_login_stat` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
+            $query = $db->query($sql);
+            if (mysql_num_rows($query) > 0) {
+                //Return the valid session.
+                $result = mysql_fetch_object($query);
+                return ($result->session_login_stat == '1');
+            } else {
+                return False;
+            }
+        }
+        return False;
+    }
+    
     public function login($username, $password) {
         // This is used to check the login credentials.
+        
     }
     
     public function getUserId() {
