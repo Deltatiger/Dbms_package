@@ -34,15 +34,15 @@ class Session {
                     $this->createNewSession();
                 } else {
                     //We check the final stage ie) the ip and browser.
-                    //if ( $result->session_create_ip != $currentIp || $result->session_browser != $currentBrowser)   {
-                    //    $this->createNewSession();
-                    //} else {
+                    if ( $result->session_create_ip != $currentIp || $result->session_browser != $currentBrowser)   {
+                        $this->createNewSession();
+                    } else {
                         //This means that the session is valid. Update the time and let him pass.
                         $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_last_active` = '{$currentTime}' WHERE `session_id` = '{$sessionId}'";
                         if ( ! $db->query($sql) )   {
                             die('Session Update Failed. Contact Admin.');
                         }
-                    //}
+                    }
                 }
                 mysql_free_result($query);
             }
@@ -54,6 +54,36 @@ class Session {
                 //Neither a Cookie nor a session. We create a new session.
                 $this->createNewSession();
             }
+        }
+    }
+    
+    public function login($username, $password) {
+        // This is used to check the login credentials.
+    }
+    
+    public function getUserId() {
+        // This gets the user id from the session.
+        global $db;
+        if ( isset($_SESSION['session_id']))    {
+            //We have a session. We return the user_id if he has a login status 1.
+            $sql = "SELECT `session_user_id`, `session_login_stat` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+            $query = $db->query($sql);
+            if ( mysql_num_rows($query) > 0)    {
+                //Bingo
+                $result = mysql_fetch_object($query);
+                if ( $result->session_login_stat == '1')    {
+                    return $result->session_user_id;
+                } else {
+                    return 0;
+                }
+            } else {
+                //We dont have any rows. We unset the session.
+                unset($_SESSION['session_id']);
+                return 0;
+            }
+        } else {
+            //We dont have a session. We return 0.
+            return 0;
         }
     }
     
