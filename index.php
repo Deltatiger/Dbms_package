@@ -8,7 +8,8 @@
         <?php
             //This is the main file.
             include 'includes/config.php';
-            echo 'Welcome to my Website.';
+            echo 
+            registerUser("Deltatiger", "srIharE9407", 09, 04, 1994, "srihare.gr@gmail.com");
         ?>
     </body>
 </html>
