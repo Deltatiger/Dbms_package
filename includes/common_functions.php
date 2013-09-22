@@ -7,9 +7,9 @@
 function generateRandString($length)	{
     //This generates a random string of $length charecters long
     $randomString = '';
-    $range = 'abcdefghijklmnopqrstuvwxyz1234567890<>?:"{}!@#$%^&*()_+';
+    $range = str_split('abcdefghijklmnopqrstuvwxyz1234567890<>?:"{}!@#$%^&*()_+', '1');
     for($i = 0; $i < $length; $i++)	{
-        @$randomString .= array_rand($range);
+        $randomString .= array_rand($range);
     }
     return $randomString;
 }

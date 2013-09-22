@@ -8,15 +8,7 @@
         <?php
             //This is the main file.
             include 'includes/config.php';
-            
-           $sql = "CREATE TABLE dbms_payments (
-            `payment_basket_id`     int NOT NULL UNIQUE,
-            `payment_id`            int NULL AUTO_INCREMENT,
-            `payment_time`          DATETIME NOT NULL,
-            PRIMARY KEY (`payment_id`)
-    );";
-            $query = $db->query($sql);
-            echo $query;
+            echo 'Welcome to my Website.';
         ?>
     </body>
 </html>

@@ -9,29 +9,28 @@ class DB    {
   
     //This is the constructor
     function __construct() {
-        $this->db = mysqli_connect('localhost','root','');
-        if ( mysqli_connect_errno())    {
-            die('Could not connect to DB. Please contact Admin.');
+        $this->db = mysql_connect('localhost','root','');
+        if (mysql_errno())  {
+            die('Could not Connect to the DataBase.');
         }
-        if (mysqli_connect_error()) {
-            die('Could not connect to DB. Please contact Admin.');
-        }
+               
+        mysql_select_db("dbms_package", $this->db);
         
-        mysqli_select_db($this->db, "dbms_package");
-        
-        $this->dbName = "dbms_package";
+        $this->dbName = 'dbms_package';
     }
     
-    public function getDbName() {
+    public function name() {
         return $this->dbName;
     }
     
-    public function query($sql) {
-        return mysqli_query($this->db, $sql) or die('SQL Error : '.  mysqli_error($this->db));
+    public function num_Rows()  {
+        //return mysql_num_rows($this->db);
     }
     
-    function __destruct() {
-        $this->db->close();
+    public function query($sql) {
+        $query = mysql_query($sql, $this->db) or die('SQL Error : '.  mysql_error());
+        return $query;
     }
+    
 }
 ?>

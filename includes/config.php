@@ -3,10 +3,13 @@
 /*
  * This is the main file that is included in all the Pages.
  */
-
-    include_once 'session.php';
+    session_start();
+    //This holds all the general functions.
+    include_once 'common_functions.php';
+    //We invoke the DB first as we need it everywhere else.
     include_once 'mydb.php';
-    
-    //This is the DB object.
     $db = new DB();
+    //Now we invoke the session
+    include_once 'session.php';
+    $session = new Session();
 ?>
