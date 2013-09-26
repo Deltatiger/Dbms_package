@@ -1,15 +1,22 @@
+<?php
+    //This is the main file.
+    include 'includes/config.php';
+    if ( $session->isLoggedIn())    {
+        echo 'You are Logged in as '.$session->getUserNameFromSession();
+    }
+?>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title></title>
+        <link rel="stylesheet" href="resources/css/main.css" />
     </head>
     <body>
-        <?php
-            //This is the main file.
-            include 'includes/config.php';
-            echo 
-            registerUser("Deltatiger", "srIharE9407", 09, 04, 1994, "srihare.gr@gmail.com");
-        ?>
+        <div id = "container">
+            <div id = "centerAlign">
+                G R A S S <br />
+            </div>
+        </div>
     </body>
 </html>

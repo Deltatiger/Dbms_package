@@ -78,7 +78,22 @@ class Session {
     
     public function login($username, $password) {
         // This is used to check the login credentials.
-        
+        if ($this->isLoggedIn())    {
+            return false;
+        } else {
+            //We log the user in.
+            global $db;
+            $usernameClean = strtolower($username);
+            $passwordHash = sha1($password);
+            $sql = "SELECT `user_id` FROM `{$db->name()}`.`dbms_user` WHERE LOWER(`user_name`) = '{$usernameClean}' AND `user_pass` = '{$passwordHash}'";
+            $query = $db->query($sql);
+            if (mysql_num_rows($query) > 0) {
+                //We proceed to log the user in.
+                $result = mysql_fetch_object($query);
+                $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_login_stat` = '1' , `session_user_id` = '{$result->user_id}' WHERE `session_id` = '{$_SESSION['session_id']}'";
+                $query = $db->query($sql);
+            }
+        }
     }
     
     public function getUserId() {
@@ -130,6 +145,25 @@ class Session {
                 die('Session Creation Problem. Contact Admin.');
             }
             $_SESSION['session_id'] = $newSesId;
+        }
+    }
+    
+    public function getUserNameFromSession()    {
+        if (!$this->isLoggedIn())   {
+            return false;
+        }
+        //Now we link the tables
+        global $db;
+        $sessionId = $_SESSION['session_id'];
+        $sql = "SELECT `user_name` FROM `{$db->name()}`.`dbms_user`, `{$db->name()}`.`dbms_session` WHERE `dbms_session`.`session_user_id` = `dbms_user`.`user_id` AND `session_id` = '{$sessionId}'";
+        $query = $db->query($sql);
+        if (mysql_num_rows($query) > 0)     {
+            $result = mysql_fetch_object($query);
+            $userName = $result->user_name;
+            mysql_free_result($query);
+            return $userName;
+        } else {
+            return False;
         }
     }
     

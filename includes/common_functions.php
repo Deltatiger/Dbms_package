@@ -36,8 +36,8 @@ function registerUser($username, $password, $dobDay, $dobMonth, $dobYear , $emai
         $usernameClean = trim($username);
         $emailClean = trim($email);
         //This is the crypt for hashing the password.
-        $passwordHash = crypt($password);
-        $dobFormat = "{$dobYear}-{$dobMonth}-{$dobDay}";
+        $passwordHash = sha1($password);
+        $dobFormat = sprintf("%04d-%02d-%02d", $dobYear, $dobMonth, $dobDay);
         $sql = "INSERT INTO `{$db->name()}`.`dbms_user`(`user_name`,`user_pass`,`user_dob`,`user_email`) VALUES ('{$usernameClean}','{$passwordHash}','{$dobFormat}','{$emailClean}')";
         $query = $db->query($sql);
     }

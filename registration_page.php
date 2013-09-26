@@ -10,12 +10,13 @@
         $username = $_POST['uname'];
         $userpass = $_POST['upass'];
         $userEmail = $_POST['uemail'];
-        $userDoBY = intval($_POST['udoby']);
-        $userDoBM = intval($_POST['udobm']);
-        $userDoBs = intval($_POST['udobs']);
+        $userDoBY = intval($_POST['udobY']);
+        $userDoBM = intval($_POST['udobM']);
+        $userDoBs = intval($_POST['udobD']);
         
         if (registerUser($username, $userpass, $userDoBs, $userDoBM, $userDoBY, $userEmail))    {
             //This is the pass condition.
+            $session->login($username, $userpass);
             header('Location:index.php');
         } else {
             $message = "Error Occured. Try again with Valid Data.";
@@ -58,9 +59,9 @@
             <p style="text-align: center; font-size: 25px">Registration </p>
             <div class="line"><label for="name">Name *: </label><input type="text" id="name" name="uname"/></div><br>
             <div class="line"><label for="birthday">DOB  (YYYY MM DD) :</label>
-                <input type="date" id="birthday" name="dobY" style="width:50px;"/>
-                <input type="date" id="birthday" name="dobM" style="width:50px;"/>
-                <input type="date" id="birthday" name="dobD" style="width:50px;"/>
+                <input type="date" id="birthday" name="udobY" style="width:50px;"/>
+                <input type="date" id="birthday" name="udobM" style="width:50px;"/>
+                <input type="date" id="birthday" name="udobD" style="width:50px;"/>
             </div><br>
             <div class="line"><label for="email">E-mail *: </label><input type="email" id="email" name="uemail"/></div><br>
             <div class="line"><label for ="password">Password *: </label><input type="password" id="password" name="upass" /></div><br>

@@ -1,0 +1,11 @@
+#container	{
+	display: table;
+	width: 100%;
+}
+
+#centerAlign	{
+	width: 80%;
+	display: table-cell;
+	vertical-align: middle;
+	background: yellow;
+}
