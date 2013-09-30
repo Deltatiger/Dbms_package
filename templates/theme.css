@@ -39,9 +39,14 @@ root {
 }
 
 #navBar {
-    display: inline block;
+    width: 100%;
 }
 
 #navBar ul  {
     list-style-type: none;
+}
+
+#navBar li  {
+    display: inline;
+    padding-right: 10px;
 }

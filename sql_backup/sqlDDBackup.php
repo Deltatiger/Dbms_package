@@ -45,8 +45,10 @@ $sql[3] = "CREATE TABLE dbms_session   (
             `session_create_ip`     text,
             `session_browser`       text,
             `session_login_stat`    int DEFAULT 0,
+            `session_basket_id`     int,
             PRIMARY KEY (`session_id`),
             FOREIGN KEY (`session_user_id`) REFERENCES `dbms_package`.`dbms_user`(`user_id`)
+            FOREIGN KEY (`session_basket_id
     );";
 
 // This is the seller Table.

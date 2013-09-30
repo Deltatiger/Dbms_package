@@ -93,6 +93,7 @@ class Session {
                 $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_login_stat` = '1' , `session_user_id` = '{$result->user_id}' WHERE `session_id` = '{$_SESSION['session_id']}'";
                 $query = $db->query($sql);
             }
+            return true;
         }
     }
     

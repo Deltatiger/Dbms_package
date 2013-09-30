@@ -13,7 +13,7 @@
     if ( isset($_POST['login']))    {
         $username = mysql_real_escape_string(trim($_POST['uname']));
         $userpass = mysql_real_escape_string(trim($_POST['upass']));
-        if ( $session->login($username, $userpass)) {
+        if ( $session->login($username, $userpass) ) {
             header('Location:index.php');
         } else {
             $message = 'Invalid Credentials.';

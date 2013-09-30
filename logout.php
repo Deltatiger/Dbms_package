@@ -12,6 +12,8 @@
      $sessionId = $_SESSION['session_id'];
      unset($_SESSION['session_id']);
      $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
+     $db->query($sql);
+     
      if ( isset($_COOKIE['cookie_id'])) {
          //We have to remove the cookie from the DB too.
          $cookieId = $_COOKIE['cookie_id'];
@@ -19,4 +21,6 @@
          $db->query($sql);
          unset($_COOKIE['cookie_id']);
      }
+     //Now we redirect the user to the index page.
+     header('Location:index.php');
 ?>

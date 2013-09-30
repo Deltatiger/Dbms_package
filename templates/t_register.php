@@ -1,11 +1,3 @@
-<?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-?>
-
 <div id ="mBody">
     <div class="centerAlign" style="background-color:#EEEEEE;width:500px; margin:0 auto;">
         <form method="POST" autocomplete="on" action="registration_page.php">
