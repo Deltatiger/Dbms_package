@@ -3,8 +3,11 @@
     Created on : Sep 28, 2013, 8:14:16 AM
     Author     : DeltaTiger
     Description:
-        Purpose of the stylesheet follows.
+        This is the main style sheet that is used commonly throught the website. Will try to keep stuff organized.
 */
+body    {
+    font-family: 'Open Sans', sans-serif;
+}
 
 root { 
     display: table;
@@ -20,4 +23,25 @@ root {
 
 #mBody  {
     
+}
+
+.line   {
+    padding: 5px;
+}
+
+.shortInput {
+    width: 75px;
+}
+
+.centerTextAlign    {
+    text-align: center;
+    font-size: 25px;
+}
+
+#navBar {
+    display: inline block;
+}
+
+#navBar ul  {
+    list-style-type: none;
 }

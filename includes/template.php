@@ -60,7 +60,7 @@ class Template {
          * 4. Footer
          */
         include_once 'templates/header.php';
-        include_once 'templates/navbar.html';
+        include_once 'templates/navbar.php';
         include_once 'templates/'.$this->pageName.'.php';
         include_once 'templates/footer.html';
     }
