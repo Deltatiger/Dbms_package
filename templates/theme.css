@@ -1,0 +1,23 @@
+/* 
+    Document   : theme
+    Created on : Sep 28, 2013, 8:14:16 AM
+    Author     : DeltaTiger
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: table;
+}
+
+#container  {
+    width: 90%;
+    min-width: 1024px;
+    display: table-cell;
+    vertical-align: middle;
+    background: yellow;
+}
+
+#mBody  {
+    
+}

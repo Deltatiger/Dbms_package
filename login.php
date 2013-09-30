@@ -23,7 +23,7 @@
 
 <!DOCTYPE HTML>
 <html>
-  <head>
+    <head>
         <style type="text/css">
  
             body {font-family:Arial, Sans-Serif;}
@@ -39,9 +39,7 @@
  
         </style>
     </head>
-<body>
-
-
+    <body>
     <div id="header" style="background-color:#24A500;">
 
     <h1 style="margin-bottom:0;">HJRKART.COM</h1></div>

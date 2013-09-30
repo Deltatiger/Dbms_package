@@ -12,4 +12,8 @@
     //Now we invoke the session
     include_once 'session.php';
     $session = new Session();
+    //Now we include the template.
+    include_once 'template.php';
+    $template = new Template();
+    
 ?>

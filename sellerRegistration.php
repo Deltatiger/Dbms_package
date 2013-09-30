@@ -27,7 +27,9 @@
             $message = "<br><br><div><input type=\"submit\" value=\"Register As Seller\" name=\"register\"></div>";
         }
     }
+    $template->setPageTitle('Registration Page.');
 ?>
+<!--
 <!DOCTYPE HTML>
 <html>
   <head>
@@ -77,4 +79,4 @@
 
 </body>
 </html>
-
+-->
