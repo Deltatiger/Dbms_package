@@ -35,8 +35,18 @@ $sql[2] = "CREATE TABLE dbms_user  (
             PRIMARY KEY (`user_id`)
     );";
 
+// This is the Basket Table
+$sql[3] = "CREATE TABLE dbms_basket    (
+            `basket_id`         int NULL AUTO_INCREMENT,
+            `basket_user_id`    int,
+            `basket_clear`      int DEFAULT 1,
+            PRIMARY KEY (`basket_id`),
+            FOREIGN KEY (`basket_user_id`) REFERENCES `dbms_package`.`dbms_user`(`user_id`),
+            CONSTRAINT `basket_clear_check` CHECK (`basket_clear` IN (0, 1))
+    );";
+
 // This is the session Table.
-$sql[3] = "CREATE TABLE dbms_session   (
+$sql[4] = "CREATE TABLE dbms_session   (
             `session_id`            VARCHAR(60),
             `session_user_id`       int,
             `session_create_time`   int,
@@ -47,12 +57,12 @@ $sql[3] = "CREATE TABLE dbms_session   (
             `session_login_stat`    int DEFAULT 0,
             `session_basket_id`     int,
             PRIMARY KEY (`session_id`),
-            FOREIGN KEY (`session_user_id`) REFERENCES `dbms_package`.`dbms_user`(`user_id`)
-            FOREIGN KEY (`session_basket_id
+            FOREIGN KEY (`session_user_id`) REFERENCES `dbms_package`.`dbms_user`(`user_id`),
+            FOREIGN KEY (`session_basket_id`) REFERENCES `dbms_package`.`dbms_basket`(`basket_id`)
     );";
 
 // This is the seller Table.
-$sql[4] = "CREATE TABLE dbms_seller_info    (
+$sql[5] = "CREATE TABLE dbms_seller_info    (
             `seller_user_id`    int,
             `seller_approved`   int DEFAULT 0,
             `seller_avg_rating` real DEFAULT 0,
@@ -62,7 +72,7 @@ $sql[4] = "CREATE TABLE dbms_seller_info    (
     );";
 
 // This is the Item table.
-$sql[5] = "CREATE TABLE dbms_item  (
+$sql[6] = "CREATE TABLE dbms_item  (
             `item_name`         varchar(40),
             `item_id`           int NULL AUTO_INCREMENT,
             `item_sub_category` int,
@@ -75,16 +85,6 @@ $sql[5] = "CREATE TABLE dbms_item  (
             CONSTRAINT `item_ratings_check` CHECK (`item_avg_rating` BETWEEN 0 AND 5)
     );";
 
-// This is the Basket Table
-$sql[6] = "CREATE TABLE dbms_basket    (
-            `basket_id`         int NULL AUTO_INCREMENT,
-            `basket_user_id`    int,
-            `basket_clear`      int DEFAULT 1,
-            PRIMARY KEY (`basket_id`),
-            FOREIGN KEY (`basket_user_id`) REFERENCES `dbms_package`.`dbms_user`(`user_id`),
-            CONSTRAINT `basket_clear_check` CHECK (`basket_clear` IN (0, 1))
-    );";
-        
 // This is the relation that connects Basket and Items
 $sql[7] = "CREATE TABLE dbms_basket_contains   (
             `basket_id`         int NOT NULL,

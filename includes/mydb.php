@@ -28,7 +28,7 @@ class DB    {
     }
     
     public function query($sql) {
-        $query = mysql_query($sql, $this->db) or die('SQL Error : '.  mysql_error());
+        $query = mysql_query($sql, $this->db) or die('SQL Error : '.  mysql_error().'<br />'.$sql);
         return $query;
     }
     

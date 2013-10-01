@@ -9,6 +9,8 @@
     //We invoke the DB first as we need it everywhere else.
     include_once 'mydb.php';
     $db = new DB();
+    //Now we include the Basket class but do not make an instance of it. It is made in the session Class.
+    include_once 'basket.php';
     //Now we invoke the session
     include_once 'session.php';
     $session = new Session();

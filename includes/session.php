@@ -9,6 +9,8 @@
 
 
 class Session {
+    private $uBasket;
+    
     public function __construct() {
         //This is the main constructor method.
         $currentTime = time();
@@ -35,6 +37,7 @@ class Session {
                 } else {
                     //We check the final stage ie) the ip and browser.
                     if ( $result->session_create_ip != $currentIp || $result->session_browser != $currentBrowser)   {
+                        //The session and IP dont match. Create a new Session.
                         $this->createNewSession();
                     } else {
                         //This means that the session is valid. Update the time and let him pass.
@@ -129,6 +132,7 @@ class Session {
         $currentTime = time();
         $currentIp = $_SERVER['REMOTE_ADDR'];
         $currentBrowser = $_SERVER['HTTP_USER_AGENT'];
+        $oldBasketId = 0;
         global $db;
         if (isset($_COOKIE['cookie_id']))   {
             //We have a cookie. We need to add the table first.
@@ -136,11 +140,35 @@ class Session {
         } else {
             if ( isset($_SESSION['session_id']))    {
                 //We have to delete this from the Db and make a new one.
+                //First we check if the user had any items in his Basket.
+                $sql = "SELECT COUNT(`basket_item_id`) as itemsInBasket 
+                    FROM `{$db->name()}`.`dbms_session`, `{$db->name()}`.`dbms_basket_contains` 
+                    WHERE `dbms_session`.`session_basket_id` = `dbms_basket_contains`.`basket_id` AND
+                        `dbms_session`.`session_id` = '{$_SESSION['session_id']}'";
+                $query = $db->query($sql);
+                if (mysql_num_rows($query) > 0) {
+                    //This means that the basket has some items. We have to preserve the Basket Id.
+                    $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+                    $query = $db->query($sql);
+                    $result = mysql_fetch_object($query);
+                    $oldBasketId = $result->session_basket_id;
+                    $this->uBasket = new Basket($oldBasketId);
+                } else {
+                    //We dont have enough items in the Basket. Better we delete it.
+                    $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = (SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}')";
+                    $query = $db->query($sql);
+                    $this->uBasket = new Basket(-1);
+                    $oldBasketId = $this->uBasket->getBasketId();
+                }
                 $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
                 $db->query($sql);
                 unset($_SESSION['session_id']);
+            } else {
+                //No session seems to be available. We make a new Basket for the user and assign it to him.
+                $this->uBasket = new Basket(-1);
+                $oldBasketId = $this->uBasket->getBasketId();
             }
-            $sql = "INSERT INTO `{$db->name()}`.`dbms_session` VALUES ('{$newSesId}', NULL, {$currentTime}, {$currentTime}, 0, '{$currentIp}', '{$currentBrowser}', 0)";
+            $sql = "INSERT INTO `{$db->name()}`.`dbms_session` VALUES ('{$newSesId}', NULL, {$currentTime}, {$currentTime}, 0, '{$currentIp}', '{$currentBrowser}', 0, {$oldBasketId})";
             $query = $db->query($sql);
             if ( !$query )   {
                 die('Session Creation Problem. Contact Admin.');
