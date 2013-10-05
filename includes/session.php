@@ -69,11 +69,12 @@ class Session {
          * PHP Custom Function.
          * This function is used to return the seller status of the currently logged in User.
          */
+        global $db;
         if (!$this->isLoggedIn())   {
             return false;
         }
         //We can only do this for a user that is logged in.
-        $sql = "SELECT `seller_approved` FROM `{$db->name()}`.`dbms_user`, `{$db->name()}`.`dbms_seller_info` WHERE `dbms_seller_info`.`seller_user_id` = `dbms_user`.`user_id` AND `dbms_user`.`user_id` = '{$this->getUserId()}'`";
+        $sql = "SELECT `seller_approved` FROM `{$db->name()}`.`dbms_user`, `{$db->name()}`.`dbms_seller_info` WHERE `dbms_seller_info`.`seller_user_id` = `dbms_user`.`user_id` AND `dbms_user`.`user_id` = '{$this->getUserId()}'";
         $query = $db->query($sql);
         if ( $db->numRows($query) > 0)  {
             // This means that the user is a seller.

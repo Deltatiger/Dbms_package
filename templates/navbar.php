@@ -10,6 +10,9 @@
                 echo '<li><a href="logout.php"> Logout </a></li>';
                 if ( !$session->isSeller())  {
                     echo '<li><a href="sellerRegistration.php"> Register As a Seller </a></li>';
+                } elseif ($session->isSeller()) {
+                    // This displays the Seller Details.
+                    echo '<li><a href="sellerDetails.php"> Seller Details </a></li>';
                 }
             } else {
                 echo '<li><a href="login.php"> Login </a></li>';
