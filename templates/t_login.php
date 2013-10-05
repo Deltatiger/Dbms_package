@@ -16,9 +16,7 @@
         <div align="center">
             <br>
             <?php
-                if($this->isVarSet('message')) {
-                    echo $this->getVariable('message').'<br />';
-                }
+                $this->printVar('message');
             ?>
             <br>
             <br>

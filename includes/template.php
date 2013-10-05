@@ -11,6 +11,7 @@ class Template {
     private $pageName;
     private $pageTitle;
     private $templateVars;
+    private $testVar;
     //This is the constructor of template class. Nothing much to do.
     function __construct() {
         $pageName = '';
@@ -36,17 +37,10 @@ class Template {
         $this->templateVars[$varName] = $varValue;
     }
     
-    //This function is used to check if a template variable is set 
-    public function isVarSet($varName)  {
-        return isset($this->temaplateVars[$varName]);
-    }
-    
-    //This function is used to return the varaibles value.
-    public function getVariable($varName)  {
-        if ( isset($this->templateVars[$varName]))  {
-            return $this->templateVars[$varName];
-        } else {
-            return '';
+    //This function is used to check if a template variable is set and print it.
+    public function printVar($varName)  {
+        if ( isset($this->templateVars[$varName]) )     {
+            echo $this->templateVars[$varName];
         }
     }
     
@@ -59,10 +53,10 @@ class Template {
          * 3. Main Body
          * 4. Footer
          */
-        include_once 'templates/header.php';
-        include_once 'templates/navbar.php';
-        include_once 'templates/t_'.$this->pageName.'.php';
-        include_once 'templates/footer.html';
+        include 'templates/header.php';
+        include 'templates/navbar.php';
+        include 'templates/t_'.$this->pageName.'.php';
+        include 'templates/footer.html';
     }
     
     //This function is used to set the page title.

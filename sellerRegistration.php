@@ -28,55 +28,6 @@
         }
     }
     $template->setPageTitle('Registration Page.');
+    $template->setPage('sellerRegistration');
+    $template->load();
 ?>
-<!--
-<!DOCTYPE HTML>
-<html>
-  <head>
-        <style type="text/css">
- 
-            body {font-family:Arial, Sans-Serif;}
- 
-            /*container {}*/
- 
-            form label {display:inline-block; width:140px;}
-          
-            .line   {
-                padding: 5px;
-            }
-        </style>
-    </head>
-<body>
-
-
-    <div id="header" style="background-color:#24A500;">
-
-    <h1 style="margin-bottom:0;">HJRKART.COM</h1></div>
-
-    <div id="menu" style="background-color:#FFFFFF;height:410px;width:50px;float:left;">
-
-    </div>
-
-
-    <div id="container" style="background-color:#EEEEEE;width:500px; margin:0 auto;">
-        <form method="POST" autocomplete="on" action="sellerRegistration.php">
-            <p style="text-align: center; font-size: 25px"> Login </p>
-
-            <div align="center">
-                <br>
-                <?php
-                    if(isset($message)) {
-                        echo $message.'<br />';
-                    }
-                    echo '<br />';
-                ?>
-            </div>
-        </form>
-    </div>
-
-    <div id="footer" style="background-color:#FFA500;clear:both;text-align:center;">
-    </div>
-
-</body>
-</html>
--->

@@ -23,11 +23,19 @@ class DB    {
         return $this->dbName;
     }
     
-    public function num_Rows()  {
-        //return mysql_num_rows($this->db);
+    public function result($query)  {
+        $result =  mysql_fetch_object($query);
+        return $result;
+    }
+    
+    public function numRows($query)  {
+        return mysql_num_rows($query);
     }
     
     public function query($sql) {
+        /**
+         * This function is used to perform mysql_query() (or) mysqli_query() on the open Connection.
+         */
         $query = mysql_query($sql, $this->db) or die('SQL Error : '.  mysql_error().'<br />'.$sql);
         return $query;
     }

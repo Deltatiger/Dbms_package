@@ -45,6 +45,10 @@ class Session {
                         if ( ! $db->query($sql) )   {
                             die('Session Update Failed. Contact Admin.');
                         }
+                        $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
+                        $query = $db->query($sql);
+                        $result = mysql_fetch_object($query);
+                        $this->uBasket = new Basket($result->session_basket_id);
                     }
                 }
                 mysql_free_result($query);
@@ -58,6 +62,27 @@ class Session {
                 $this->createNewSession();
             }
         }
+    }
+    
+    public function isSeller()  {
+        /**
+         * PHP Custom Function.
+         * This function is used to return the seller status of the currently logged in User.
+         */
+        if (!$this->isLoggedIn())   {
+            return false;
+        }
+        //We can only do this for a user that is logged in.
+        $sql = "SELECT `seller_approved` FROM `{$db->name()}`.`dbms_user`, `{$db->name()}`.`dbms_seller_info` WHERE `dbms_seller_info`.`seller_user_id` = `dbms_user`.`user_id` AND `dbms_user`.`user_id` = '{$this->getUserId()}'`";
+        $query = $db->query($sql);
+        if ( $db->numRows($query) > 0)  {
+            // This means that the user is a seller.
+            $result = $db->result($query);
+            if ($result->seller_approved  == 1) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public function isLoggedIn()    {
@@ -86,8 +111,8 @@ class Session {
         } else {
             //We log the user in.
             global $db;
-            $usernameClean = strtolower($username);
-            $passwordHash = sha1($password);
+            $usernameClean = strtolower(trim($username));
+            $passwordHash = sha1(trim($password));
             $sql = "SELECT `user_id` FROM `{$db->name()}`.`dbms_user` WHERE LOWER(`user_name`) = '{$usernameClean}' AND `user_pass` = '{$passwordHash}'";
             $query = $db->query($sql);
             if (mysql_num_rows($query) > 0) {
@@ -95,8 +120,12 @@ class Session {
                 $result = mysql_fetch_object($query);
                 $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_login_stat` = '1' , `session_user_id` = '{$result->user_id}' WHERE `session_id` = '{$_SESSION['session_id']}'";
                 $query = $db->query($sql);
+                // Now we also have to update the basket from . TODO : This.
+                $this->uBasket->setBasketUser();
+                return true;
+            } else {
+                return false;
             }
-            return true;
         }
     }
     
@@ -139,6 +168,31 @@ class Session {
             //TODO : Setup the cookie table and do the required.
         } else {
             if ( isset($_SESSION['session_id']))    {
+                // Since we have a session there must be a basket assosiated with it.
+                // First we have to check if the current session was a logged in session.
+                $sql = "SELECT `session_login_stat` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+                $query = $db->query($sql);
+                if ($db->numRows($query) <= 0)  {
+                    //Invalid Session.
+                    $this->uBasket = new Basket(-1);
+                } else {
+                    $result = $db->result($query);
+                    if ( $result->session_login_stat == 1)  {
+                        //We have a user who is logged in. We do not delete the basket. But we have to assign a new one to him.
+                        $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+                        $query = $db->query($sql);
+                        $this->uBasket = new Basket(-1);
+                    } else {
+                        //This is a user who is not logged in. He will be using the same Basket as always.
+                        $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+                        $query = $db->query($sql);
+                        $result = $db->result($query);
+                        $this->uBasket = new Basket($result->session_basket_id);
+                        $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+                        $db->query($sql);
+                    }
+                }
+                /*
                 //We have to delete this from the Db and make a new one.
                 //First we check if the user had any items in his Basket.
                 $sql = "SELECT COUNT(`basket_item_id`) as itemsInBasket 
@@ -150,24 +204,28 @@ class Session {
                     //This means that the basket has some items. We have to preserve the Basket Id.
                     $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
                     $query = $db->query($sql);
-                    $result = mysql_fetch_object($query);
-                    $oldBasketId = $result->session_basket_id;
-                    $this->uBasket = new Basket($oldBasketId);
+                    if ( mysql_num_rows($query) > 0 )   {
+                        $result = mysql_fetch_object($query);
+                        $oldBasketId = $result->session_basket_id;
+                        $this->uBasket = new Basket($oldBasketId);
+                    } else {
+                        $this->uBasket = new Basket(-1);
+                    }
                 } else {
                     //We dont have enough items in the Basket. Better we delete it.
                     $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = (SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}')";
                     $query = $db->query($sql);
                     $this->uBasket = new Basket(-1);
-                    $oldBasketId = $this->uBasket->getBasketId();
                 }
                 $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
                 $db->query($sql);
                 unset($_SESSION['session_id']);
+                 */
             } else {
                 //No session seems to be available. We make a new Basket for the user and assign it to him.
                 $this->uBasket = new Basket(-1);
-                $oldBasketId = $this->uBasket->getBasketId();
             }
+            $oldBasketId = $this->uBasket->getBasketId();
             $sql = "INSERT INTO `{$db->name()}`.`dbms_session` VALUES ('{$newSesId}', NULL, {$currentTime}, {$currentTime}, 0, '{$currentIp}', '{$currentBrowser}', 0, {$oldBasketId})";
             $query = $db->query($sql);
             if ( !$query )   {
@@ -206,7 +264,7 @@ class Session {
         $sql = "SELECT `session_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$encrpytedString}'";
         $query = $db->query($sql);
 
-        while($db->num_Rows() > 0) {
+        while($db->numRows($query) > 0) {
             $stringToCrypt = generateRandString(6);
             $encrpytedString = sha1($stringToCrypt);
             $query = $db->query($sql);
