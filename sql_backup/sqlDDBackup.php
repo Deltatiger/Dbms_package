@@ -77,6 +77,7 @@ $sql[6] = "CREATE TABLE dbms_item  (
             `item_id`           int NULL AUTO_INCREMENT,
             `item_sub_category` int,
             `item_seller_id`    int,
+            `item_price`        double,
             `item_stock`        int,
             `item_avg_rating`   real DEFAULT 0,
             PRIMARY KEY (`item_id`),

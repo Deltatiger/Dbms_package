@@ -8,6 +8,8 @@ and open the template in the editor.
         <title><?php echo $this->getPageTitle() ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="templates/theme.css" />
+        <script src="templates/jquery.min.js"></script>
+        <script src="templates/myJquery.js"></script>
         <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,400italic' type='text/css'>
     </head>
     <body>

@@ -50,3 +50,12 @@ root {
     display: inline;
     padding-right: 10px;
 }
+
+/*
+ * This is some styles that are used on many pages.
+ */
+
+.errorMessageMedium    {
+    color: Red;
+    font-size: 20px;
+}
