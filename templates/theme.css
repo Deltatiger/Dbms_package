@@ -7,6 +7,7 @@
 */
 body    {
     font-family: 'Open Sans', sans-serif;
+	background: #191714;
 }
 
 #container  {
@@ -66,7 +67,7 @@ body    {
 	position: fixed;
 	top: 0px;
 	left: 0px;
-	background: url('../resources/images/header-bg.png');
+	background: #5E5C62;
 	padding: 5px;
 }
 
