@@ -36,6 +36,7 @@ $(document).ready(function(){
         
     $('.catName').on({
         'click' : function()    {
+            //Change the category to sub category
             var catId = $(this).data('catid');
             var catName = $(this).html();
             $('#leftIndexHeading').html(catName);
@@ -48,12 +49,24 @@ $(document).ready(function(){
     });
     
     $('#showCat').live('click', function()    {
-            $.post('ajax/main.php', {showCat : ''}, function(result)    {
-               if (result != '')    {
-                   $('#mIndexLeftContent').html(result);
-                   $('#leftIndexHeading').html('Categories');
-               }
+        //Change subcategory back to category
+        $.post('ajax/main.php', {showCat : ''}, function(result)    {
+           if (result != '')    {
+               $('#mIndexLeftContent').html(result);
+               $('#leftIndexHeading').html('Categories');
+           }
+        });
+    });
+    
+    $('.subCatName').on({
+        'click' : function()    {
+            //Used to load the items of the paticular category into the rightPane.
+            var subCatId = $(this).data('subcatid');
+            $.post('ajax/main.php', {subCatId : subCatId}, function(result) {
+                if (result != '')   {
+                    $('#mIndexRightContnet').html(result);
+                }
             });
         }
-    );
+    });
 });

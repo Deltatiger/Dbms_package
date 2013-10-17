@@ -10,6 +10,8 @@
         </div>
     </div>
     <div id="mIndexRight">
-        Test
+        <div id="mRightIndexContent">
+            Test
+        </div>
     </div>
 </div>

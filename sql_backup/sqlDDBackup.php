@@ -71,8 +71,16 @@ $sql[5] = "CREATE TABLE dbms_seller_info    (
             CONSTRAINT `seller_avg_rating` CHECK (`seller_avg_rating` BETWEEN 0 AND 5)
     );";
 
+// This is the image Table.
+$sql[6] = "CREATE TABLE dbms_image (
+            `image_id`          int NOT NULL,
+            `image_name`        varchar(40),
+            `image_type`        varchar(5),
+            PRIMARY KEY (`image_id`)
+    );";
+
 // This is the Item table.
-$sql[6] = "CREATE TABLE dbms_item  (
+$sql[7] = "CREATE TABLE dbms_item  (
             `item_name`         varchar(40),
             `item_id`           int NULL AUTO_INCREMENT,
             `item_sub_category` int,
@@ -80,14 +88,16 @@ $sql[6] = "CREATE TABLE dbms_item  (
             `item_price`        double,
             `item_stock`        int,
             `item_avg_rating`   real DEFAULT 0,
+            `item_image_id`     int NOT NULL,
             PRIMARY KEY (`item_id`),
             FOREIGN KEY (`item_sub_category`) REFERENCES `dbms_package`.`dbms_sub_category`(`sc_id`),
             FOREIGN KEY (`item_seller_id`) REFERENCES `dbms_package`.`dbms_seller_info`(`seller_user_id`),
+            FOREIGN KEY (`item_image_id`) REFERENCES `dbms_package`.`dbms_image`(`image_id`),
             CONSTRAINT `item_ratings_check` CHECK (`item_avg_rating` BETWEEN 0 AND 5)
     );";
 
 // This is the relation that connects Basket and Items
-$sql[7] = "CREATE TABLE dbms_basket_contains   (
+$sql[8] = "CREATE TABLE dbms_basket_contains   (
             `basket_id`         int NOT NULL,
             `basket_item_id`    int NOT NULL,
             PRIMARY KEY (`basket_id`, `basket_item_id`),
@@ -96,7 +106,7 @@ $sql[7] = "CREATE TABLE dbms_basket_contains   (
     );";
 
 //This is the Ratings Table
-$sql[8] = "CREATE TABLE dbms_ratings   (
+$sql[9] = "CREATE TABLE dbms_ratings   (
             `rating_user_id`    int NOT NULL,
             `rating_item_id`    int NOT NULL,
             `rating_value`      REAL,
@@ -108,7 +118,7 @@ $sql[8] = "CREATE TABLE dbms_ratings   (
     );";
 
 // This is the Payments table
-$sql[9] = "CREATE TABLE dbms_payments (
+$sql[10] = "CREATE TABLE dbms_payments (
             `payment_basket_id`     int NOT NULL UNIQUE,
             `payment_id`            int NULL AUTO_INCREMENT,
             `payment_time`          int NOT NULL,
@@ -116,7 +126,7 @@ $sql[9] = "CREATE TABLE dbms_payments (
             FOREIGN KEY (`payment_basket_id`) REFERENCES `dbms_package`.`dbms_basket`(`basket_id`)
     );";
 
-for ( $i = 0 ; $i <= 9 ; $i++)   {
+for ( $i = 0 ; $i <= 10 ; $i++)   {
     $query = $db->query($sql[$i]);
     echo $query;
 }

@@ -63,5 +63,27 @@
         }
         $catOptions .= '<ul>';
         echo $catOptions;
+    } elseif (isset($_POST['subCatId']))    {
+        /*
+         * Page : index.php
+         * Sub Category : Adding all items of the given Subcategory into the mRightIndexContent
+         */
+        $subCatId = $_POST['subCatId'];
+        $sql = "SELECT `item_name`, `item_id`, `item_price`, `item_stock` FROM `{$db->name}`.`dbms_item` WHERE `item_sub_category` = '{$subCatId}'";
+        $query = $db->query($sql);
+        $opts = '';
+        while($row = $db->result($query))   {
+            if ( $row->item_stock <= 0) {
+                continue;
+            }
+            $opts .= '<div class="itemHolder">';
+            $opts .= '  <div class="itemImageHolder"> <img src="resources/images/'.$row->item_image_name.'" /> </div>';
+            $opts .= '  <p class="itemNameHolder"> '.$row->item_name.'</p>';
+            $opts .= '  <div class="itemNamePriceHolder">';
+            $opts .= '      <div class="itemNameLeft"><p class="itemPriceHolder"> '.$row->item_price.'</p></div>';
+            $opts .= '      <div class="itemPriceRight"><p class="itemNameHolder"> '.$row->item_name.'</p></div>';
+            $opts .= '  </div>';
+            $opts .= '</div>';
+        }
     }
 ?>
