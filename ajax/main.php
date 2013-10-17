@@ -34,5 +34,34 @@
             }
         }
         echo $message;
+    } elseif(isset($_POST['catIdShow']))    {
+        /*
+         * Page : index.php
+         * Sub Category : Loading the list of sub categories for the required category.
+         */
+       $catId = $_POST['catIdShow'];
+       $sql = "SELECT `sc_name`, `sc_id` FROM `{$db->name()}`.`dbms_sub_category` WHERE `sc_belongs_to` = '{$catId}'";
+       $query = $db->query($sql);
+       $out = '<ul id="catOptions">';
+       while($row = $db->result($query))    {
+           $out .= '<li> <a href="#" class="subCatName" data-subcatid="'.$row->sc_id.'">'.$row->sc_name.'</a></li>';
+       }
+       //This is to load back the Categories.
+       $out .= '<li> <a href="#" id="showCat" > Back To Category </a></li>';
+       $out .= '</ul>';
+       echo $out;
+    } elseif (isset($_POST['showCat'])) {
+        /*
+         * Page : index.php
+         * Sub Category : Reload all the category options into the mLeftIndexContent
+         */
+        $sql = "SELECT `c_name`, `c_id` FROM `{$db->name()}`.`dbms_category`";
+        $query = $db->query($sql);
+        $catOptions = '<ul id="catOptions">';
+        while($row = $db->result($query))   {
+            $catOptions .= '<li> <a href="#" class="catName" data-catid="'.$row->c_id.' data-catname="'.$row->c_name.'">'.$row->c_name.'</a></li>';
+        }
+        $catOptions .= '<ul>';
+        echo $catOptions;
     }
 ?>

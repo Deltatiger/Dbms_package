@@ -24,7 +24,6 @@ body    {
 
 #mBody  {
 	width: 100%;
-	background: #FFFF00;
 	min-height: 100px;
 	padding: 5px;
 }
@@ -49,6 +48,7 @@ body    {
 	min-width: 200px;
 	float: left;
 	padding: 4px;
+	background: #FFEFBF;
 }
 
 #mIndexRight	{
@@ -56,6 +56,31 @@ body    {
 	min-width: 800px;
 	float: left;
 	padding: 4px;
+	background: #FFEFBF;
+}
+
+#catOptions 	{
+	list-style-type: none;
+	padding: 10px;
+	padding-left: 20px;
+}
+
+#catOptions a, a:link, a:active	{
+	color: black;
+	text-decoration: none;
+	font-size: 18px;
+}
+
+#catOptions a:hover	{
+	font-size: 20px;
+	text-decoration: underline;
+}
+
+#leftIndexHeading	{
+	font-size: 25px;
+	font-color: black;
+	font-weight: bold;
+	text-align: center;
 }
 
 /*

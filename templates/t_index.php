@@ -2,9 +2,12 @@
 <div id ="mBody">
     <!-- This page is divided into 2 parts -->
     <div id="mIndexLeft">
-        <?php
-            $this->printVar('category');
-        ?>
+        <p id="leftIndexHeading"> Categories </p>
+        <div id="mIndexLeftContent">
+            <?php
+                $this->printVar('category');
+            ?>
+        </div>
     </div>
     <div id="mIndexRight">
         Test

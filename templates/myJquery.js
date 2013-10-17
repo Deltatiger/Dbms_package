@@ -33,4 +33,27 @@ $(document).ready(function(){
             });
         }
     );
+        
+    $('.catName').on({
+        'click' : function()    {
+            var catId = $(this).data('catid');
+            var catName = $(this).html();
+            $('#leftIndexHeading').html(catName);
+            $.post('ajax/main.php', {catIdShow : catId}, function(result)   {
+                if ( result != '')  {
+                    $('#mIndexLeftContent').html(result);
+                }
+            });
+        }
+    });
+    
+    $('#showCat').live('click', function()    {
+            $.post('ajax/main.php', {showCat : ''}, function(result)    {
+               if (result != '')    {
+                   $('#mIndexLeftContent').html(result);
+                   $('#leftIndexHeading').html('Categories');
+               }
+            });
+        }
+    );
 });
