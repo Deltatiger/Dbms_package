@@ -7,6 +7,8 @@
         header('Location:index.php');
     }
    
-    
+    $template->setPage('shome');
+    $template->setPageTitle('Seller | Home Page');
+    $template->loadPage();
     
 ?>

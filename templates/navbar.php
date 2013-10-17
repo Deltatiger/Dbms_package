@@ -3,7 +3,6 @@
 <div id ="navBar">
     <ul class="leftUL">
         <li><a href="index.php"> Home </a></li>
-        <li> About Us</li>
         <?php
             global $session;
             if ($session->isLoggedIn()) {
@@ -11,7 +10,7 @@
                     echo '<li><a href="sellerRegistration.php"> Register As a Seller </a></li>';
                 } elseif ($session->isSeller()) {
                     // This displays the Seller Details.
-                    echo '<li><a href="sellerDetails.php"> Seller Details </a></li>';
+                    echo '<li><a href="sellerHome.php"> Seller Details </a></li>';
                 }
             }
         ?>

@@ -65,7 +65,7 @@ body    {
 	padding-left: 20px;
 }
 
-#catOptions a, a:link, a:active	{
+#catOptions  a, a:link, a:active	{
 	color: black;
 	text-decoration: none;
 	font-size: 18px;
@@ -83,6 +83,116 @@ body    {
 	text-align: center;
 }
 
+#mRightIndexContent	{
+	padding: 10px;
+	margin: 5px;
+}
+
+#mRightIndexContent	 a	{
+	font-size: 20px;
+	color: black;
+}
+
+#mRightIndexContent  a:hover	{
+	color: black;
+	text-decoration: underline;
+}
+
+.itemHolder	{
+	width: 200px;
+	padding: 5px;
+	border: 1px solid black;
+	float: left;
+}
+
+.itemImageHolder	{
+	width: 75%;
+	margin: 0 auto;
+}
+
+.itemNameHolder	{
+	height: 20px;
+	width: 100%;
+	text-align: center;
+}
+
+.itemPriceQtyHolder	{
+	width: 100%;
+}
+
+.itemPriceLeft	{
+	width: 45%;
+	float: left;
+	padding-left: 5px;
+	text-align: left;
+}
+
+.itemQtyRight	{
+	width: 45%;
+	float: right;
+	padding-right: 5px;
+	text-align: right;
+}
+
+/*
+ * End of the Index Page CSS.
+ */
+ 
+/*
+ * This is the CSS for the Seller | Home Page.
+ */
+#mSellerLeft	{
+	width: 20%;
+	min-width: 200px;
+	float: left;
+	background: #FFEFBF;
+}
+
+#mSellerRight	{
+	width: 75%;
+	min-width: 600px;
+	float: left;
+	background: #FFEFBF;
+}
+
+#mSellerLeft ul 	{
+	list-style-type: none;
+	font-size: 20px;
+}
+
+
+#mSellerLeft a {
+	color: black;
+	text-decoration: none;
+}
+
+#mSellerLeft a:link, a:visited	{
+	color: black;
+	text-decoration: none;
+}
+
+#mSellerLeft a:hover	{
+	text-decoration: underline;
+	font-size: 22px;
+}
+
+#sellerStatHolder	{
+	padding: 10px;
+	width: 80%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.sellerStatTable	{
+	width : 100%;
+	border: 2px solid #191714;
+}
+
+.sellerStatTable	th{
+	padding: 0px;
+	margin: 0px;
+	border-bottom: 2px solid #191714;
+}
 /*
  * This is the UI for the NavBar
  */
@@ -147,4 +257,10 @@ body    {
 .errorMessageMedium    {
     color: Red;
     font-size: 20px;
+}
+
+.highPadMarCen	{
+	padding: 10px;
+	margin: 10px;
+	text-align: center;
 }

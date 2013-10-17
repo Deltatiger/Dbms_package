@@ -34,8 +34,7 @@ $(document).ready(function(){
         }
     );
         
-    $('.catName').on({
-        'click' : function()    {
+    $('.catName').live('click' , function()    {
             //Change the category to sub category
             var catId = $(this).data('catid');
             var catName = $(this).html();
@@ -46,7 +45,7 @@ $(document).ready(function(){
                 }
             });
         }
-    });
+    );
     
     $('#showCat').live('click', function()    {
         //Change subcategory back to category
@@ -58,14 +57,37 @@ $(document).ready(function(){
         });
     });
     
-    $('.subCatName').on({
-        'click' : function()    {
+    $('.subCatName').live('click', function()    {
             //Used to load the items of the paticular category into the rightPane.
             var subCatId = $(this).data('subcatid');
             $.post('ajax/main.php', {subCatId : subCatId}, function(result) {
                 if (result != '')   {
-                    $('#mIndexRightContnet').html(result);
+                    $('#mRightIndexContent').html(result);
                 }
+            });
+        }
+    );
+    
+    $('#sellerAddItem').on({
+        'click' : function()    {
+            //Used to href to the page with add item code.
+            window.location = 'addItem.php';
+        }
+    });
+    
+    /* On Hold
+    $('#sellerUpdateStock').on({
+        'click' : function()    {
+            //Have to load the items to the right side and ask to update.
+            window.location = 'addItem.php';
+        }
+    });*/
+    
+    $('#sellerViewStats').on({
+        'click' : function()    {
+            //Used to show the stats of all the items in a table.
+            $.post('ajax/main.php', {showSellerStats : true} , function(result) {
+                $('#mSellerRight').html(result);
             });
         }
     });
