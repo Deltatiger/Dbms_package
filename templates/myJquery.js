@@ -9,6 +9,7 @@ $(document).ready(function(){
             var categoryId = $('#aItemCat').val();
             $.post('ajax/main.php', {catId : categoryId}, function (result) {
                 //This loads the text into the subcategory
+                
                 $('#aItemSubCat').html(result);
             });
         }
@@ -18,11 +19,18 @@ $(document).ready(function(){
             var itemName = $('#aItemName').val();
             $.post('ajax/main.php', {iName : itemName}, function(result)    {
                 // This loads the result into the message box.
+                if (result != '')   {
+                    // This means that the output is an error. We diable the submit button.
+                    $('#aItemSubmit').attr('disabled', 'disabled');
+                } else {
+                    if ( itemName.trim().length == 0) { // Make sure no submit on null values.
+                        $('#aItemSubmit').attr('disabled', 'disabled');
+                    } else {
+                        $('#aItemSubmit').removeAttr('disabled');
+                    }
+                }
                 $('#aItemNameExists').html(result);
             });
         }
     );
-    $('#aItemSubmit').click(function()  {
-        // This is to use Ajax to submit the entire forum.
-    });
 });

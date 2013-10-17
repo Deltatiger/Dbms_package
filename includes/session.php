@@ -64,6 +64,15 @@ class Session {
         }
     }
     
+    public function getBasketCount()    {
+        //This function is used to get the item count using the sessions basket.
+        global $db;
+        $sql = "SELECT COUNT(`basket_item_id`) as itemCount FROM `{$db->name()}`.`dbms_session` , `{$db->name()}`.`dbms_basket_contains` WHERE `dbms_session`.`session_id` = '{$_SESSION['session_id']}' AND `dbms_basket_contains`.`basket_id` = `dbms_session`.`session_basket_id`";
+        $query = $db->query($sql);
+        $result = $db->result($query);
+        return $result->itemCount;
+    }
+    
     public function isSeller()  {
         /**
          * PHP Custom Function.
@@ -180,8 +189,6 @@ class Session {
                     $result = $db->result($query);
                     if ( $result->session_login_stat == 1)  {
                         //We have a user who is logged in. We do not delete the basket. But we have to assign a new one to him.
-                        $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
-                        $query = $db->query($sql);
                         $this->uBasket = new Basket(-1);
                     } else {
                         //This is a user who is not logged in. He will be using the same Basket as always.
@@ -189,10 +196,10 @@ class Session {
                         $query = $db->query($sql);
                         $result = $db->result($query);
                         $this->uBasket = new Basket($result->session_basket_id);
-                        $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
-                        $db->query($sql);
                     }
                 }
+                $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+                $db->query($sql);
                 /*
                 //We have to delete this from the Db and make a new one.
                 //First we check if the user had any items in his Basket.

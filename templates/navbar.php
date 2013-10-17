@@ -1,19 +1,27 @@
 <!-- This is the Common Navbar that appears on all pages -->
 
 <div id ="navBar">
-    <ul>
-        <li> Home </li>
+    <ul class="leftUL">
+        <li><a href="index.php"> Home </a></li>
         <li> About Us</li>
         <?php
             global $session;
             if ($session->isLoggedIn()) {
-                echo '<li><a href="logout.php"> Logout </a></li>';
                 if ( !$session->isSeller())  {
                     echo '<li><a href="sellerRegistration.php"> Register As a Seller </a></li>';
                 } elseif ($session->isSeller()) {
                     // This displays the Seller Details.
                     echo '<li><a href="sellerDetails.php"> Seller Details </a></li>';
                 }
+            }
+        ?>
+    </ul>
+    <ul class="rightUL">
+        <?php
+            $content = '';
+            echo '<li><a href="mybasket.php"> My Basket ['.$session->getBasketCount().']</a></li>';
+            if ($session->isLoggedIn()) {
+                echo '<li><a href="logout.php"> Logout </a></li>';
             } else {
                 echo '<li><a href="login.php"> Login </a></li>';
                 echo '<li><a href="registration_page.php"> Register </a></li>';
@@ -21,3 +29,6 @@
         ?>
     </ul>
 </div>
+<!-- Start the wrapper Div -->
+<div id ="container">
+    <div id="containerCenter">

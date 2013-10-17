@@ -9,20 +9,23 @@ body    {
     font-family: 'Open Sans', sans-serif;
 }
 
-root { 
+#container  {
+	margin-top: 50px;
+    width: 100%;
+    min-width: 1024px;
     display: table;
 }
 
-#container  {
-    width: 90%;
-    min-width: 1024px;
-    display: table-cell;
-    vertical-align: middle;
-    background: yellow;
+#containerCenter	{
+	width: 95%;
+	margin: 0 auto;
 }
 
 #mBody  {
-    
+	width: 100%;
+	background: #FFFF00;
+	min-height: 100px;
+	padding: 5px;
 }
 
 .line   {
@@ -37,19 +40,79 @@ root {
     text-align: center;
     font-size: 25px;
 }
+/*
+ * This is the CSS for the Index Page.
+ */
+#mIndexLeft	{
+	width: 20%;
+	min-width: 200px;
+	float: left;
+	padding: 4px;
+}
+
+#mIndexRight	{
+	width: 70%;
+	min-width: 800px;
+	float: left;
+	padding: 4px;
+}
+
+/*
+ * This is the UI for the NavBar
+ */
 
 #navBar {
     width: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	background: url('../resources/images/header-bg.png');
+	padding: 5px;
 }
+
+#navBar	a	{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+#navBar	a:link	, a:visited{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+#navBar a:hover	{
+	text-decoration: underline;
+}
+
 
 #navBar ul  {
     list-style-type: none;
+	padding: 0px;
+	margin: 0px;
 }
 
 #navBar li  {
     display: inline;
     padding-right: 10px;
 }
+
+.leftUL	{
+	width: 45%;
+	float: left;
+	text-align: left;
+}
+
+.rightUL	{
+	width: 45%;
+	float: right;
+	text-align: right;
+}
+
+/*
+ * End of navbar.
+ */
+
+
 
 /*
  * This is some styles that are used on many pages.
