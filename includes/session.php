@@ -9,7 +9,7 @@
 
 
 class Session {
-    private $uBasket;
+    public $uBasket;
     
     public function __construct() {
         //This is the main constructor method.
@@ -62,15 +62,6 @@ class Session {
                 $this->createNewSession();
             }
         }
-    }
-    
-    public function getBasketCount()    {
-        //This function is used to get the item count using the sessions basket.
-        global $db;
-        $sql = "SELECT COUNT(`basket_item_id`) as itemCount FROM `{$db->name()}`.`dbms_session` , `{$db->name()}`.`dbms_basket_contains` WHERE `dbms_session`.`session_id` = '{$_SESSION['session_id']}' AND `dbms_basket_contains`.`basket_id` = `dbms_session`.`session_basket_id`";
-        $query = $db->query($sql);
-        $result = $db->result($query);
-        return $result->itemCount;
     }
     
     public function isSeller()  {
@@ -148,7 +139,7 @@ class Session {
             $query = $db->query($sql);
             if ( mysql_num_rows($query) > 0)    {
                 //Bingo
-                $result = mysql_fetch_object($query);
+                $result = $db->result($query);
                 if ( $result->session_login_stat == '1')    {
                     return $result->session_user_id;
                 } else {
@@ -162,6 +153,20 @@ class Session {
         } else {
             //We dont have a session. We return 0.
             return 0;
+        }
+    }
+    
+    public function getUserName()   {
+        global $db;
+        if ( isset($_SESSION['session_id']))    {
+            $sql = "SELECT `user_name` FROM `{$db->name()}`.`dbms_user` , `{$db->name()}`.`dbms_session` WHERE `dbms_user`.`user_id` = `dbms_session`.`session_user_id` AND `dbms_session`.`session_id` = '{$_SESSION['session_id']}' AND `dbms_session`.`session_login_stat` = '1'";
+            $query = $db->query($sql);
+            $result = $db->result($query);
+            if ( $db->numRows($query) > 0)  {
+                return $result->user_name;
+            } else {
+                return 'Guest';
+            }
         }
     }
     

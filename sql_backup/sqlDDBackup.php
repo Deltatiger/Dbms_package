@@ -100,6 +100,7 @@ $sql[7] = "CREATE TABLE dbms_item  (
 $sql[8] = "CREATE TABLE dbms_basket_contains   (
             `basket_id`         int NOT NULL,
             `basket_item_id`    int NOT NULL,
+            `basket_item_qty`   int NOT NULL,
             PRIMARY KEY (`basket_id`, `basket_item_id`),
             FOREIGN KEY (`basket_id`) REFERENCES `dbms_package`.`dbms_basket`(`basket_id`),
             FOREIGN KEY (`basket_item_id`) REFERENCES `dbms_package`.`dbms_item`(`item_id`)

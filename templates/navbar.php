@@ -17,13 +17,13 @@
     </ul>
     <ul class="rightUL">
         <?php
-            $content = '';
-            echo '<li><a href="mybasket.php"> My Basket ['.$session->getBasketCount().']</a></li>';
+            echo '<li>'.$session->getUserName().'</li>';
+            echo '<li><a href="mybasket.php" id="myBasketLink">My Basket ['.$session->uBasket->getBasketCount().']</a></li>';
             if ($session->isLoggedIn()) {
-                echo '<li><a href="logout.php"> Logout </a></li>';
+                echo '<li><a href="logout.php">Logout</a></li>';
             } else {
-                echo '<li><a href="login.php"> Login </a></li>';
-                echo '<li><a href="registration_page.php"> Register </a></li>';
+                echo '<li><a href="login.php">Login</a></li>';
+                echo '<li><a href="registration_page.php">Register</a></li>';
             }
         ?>
     </ul>

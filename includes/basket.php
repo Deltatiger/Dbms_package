@@ -14,27 +14,22 @@ class Basket  {
     private $basketId;
     
     public function __construct($basketId)   {
-        //This function is the heart and soul of the class. This uses the session to find out if the user needs a new Basket or not.
+        //This function is the core of the class. This uses the session to find out if the user needs a new Basket or not.
        if ( $basketId == -1)    {
            //This means we need a new Basket.
            $basketId = $this->createNewBasket();    //Creates and returns a new Basket Number.
        }
-       //We assign the 
+       //We assign the basketId to the class variable.
        $this->basketId = $basketId;
     }
     
-    public function addItem($itemId)   {
+    public function addItem($itemId, $itemQty)   {
         //This function is used to add an item to the Basket.
         //We first have to check if the item is already in the Basket.
-        $sql = "SELECT COUNT(*) FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$this->basketId}' AND `basket_item_id` = '{$itemId}'";
+        global $db;
+        $sql = "INSERT INTO `{$db->name()}`.`dbms_basket_contains` VALUES ({$this->basketId}, {$itemId}, {$itemQty})";
         $query = $db->query($sql);
-        if (mysql_num_rows($query) > 0)     {
-            return False;
-        } else {
-            $sql = "INSERT INTO `{$db->name()}`.`dbms_basket_contains` VALUES ({$this->basketId}, {$itemId})";
-            $query = $db->query($sql);
-            return True;
-        }
+        return True;
     }
     
     public function removeItem($itemId) {
@@ -44,8 +39,38 @@ class Basket  {
         $query = $db->query($sql);
     }
     
+    public function updateItemQuantity($itemId, $newItemQty)    {
+        //This function is used to update the item Quantity since primary key will not allow a new record insertion.
+        global $db;
+        $sql = "UPDATE `{$db->name()}`.`dbms_basket_contains` SET `basket_item_qty` = `basket_item_qty` + {$newItemQty} WHERE `basket_id` = '{$this->basketId}' AND `basket_item_id` = '{$itemId}'";
+        $query = $db->query($sql);
+        return True;
+    }
+    
     public function getBasketId()   {
         return $this->basketId;
+    }
+    
+    public function getBasketCount()    {
+        //This function is used to get the item count using the sessions basket.
+        global $db;
+        $sql = "SELECT COUNT(`basket_item_id`) as itemCount FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$this->basketId}'";
+        $query = $db->query($sql);
+        $result = $db->result($query);
+        return $result->itemCount;
+    }
+    
+    public function isInBasket($itemId) {
+        //This function is used to check if the given `itemId` already exists in the current basket.
+        global $db;
+        $sql = "SELECT COUNT(`basket_item_id`) as itemCount FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$this->basketId}' AND `basket_item_id` = '{$itemId}'";
+        $query = $db->query($sql);
+        $result = $db->result($query);
+        if ($result->itemCount > 0)     {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function createNewBasket()  {
@@ -76,62 +101,106 @@ class Basket  {
         }
         //We have to check for a basket with the same user id
         $userId = $session->getUserId();
-        // Now we have to check if there are items in his current basket.
-        $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
+        $basketId = $this->basketId;
+        //First we have to check if the current userId has an already existing Basket.
+        $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}'";
         $query = $db->query($sql);
-        $result = mysql_fetch_object($query);
-        $newBasketId = $result->session_basket_id;
-        $sql = "SELECT COUNT(*) as basket_count FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$newBasketId}'";
-        $query = $db->query($sql);
-        if(mysql_num_rows($query) >= 0)  {
-            //We have some kind of result. We check out the details.
-            $result = mysql_fetch_object($query);
-            if ( $result->basket_count > 0) {
-                //We have some items in the current basket. Now we have to check if the user has a basket.
-                $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}'";
+        if ( $db->numRows($query) == 1) {
+            //We seem to have a basket. Now to check if that basket has any items.
+            $uHasBasket = $db->result($query);
+            $existingBasketId = $uHasBasket->basket_id;
+            
+            $sql = "SELECT COUNT(`basket_item_id`) as basketItemCount FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$existingBasketId}'";
+            $query = $db->query($sql);
+            $result = $db->result($query);
+            
+            if($result->basketItemCount > 0)    {
+                //There are some items in the basket.
+                /*
+                 * 1. Reinsert all items in the `existingBasketId` into the current Basket.
+                 * 2. Delete the `existingBasket` 
+                 * 3. Set current baskets user to `userId`.
+                 */
+                
+                //Step 1.
+                $sql = "SELECT `basket_item_id`, `basket_item_qty` FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$existingBasketId}'";
                 $query = $db->query($sql);
-                if (mysql_num_rows($query) > 0) {
-                    //We have a basket for the user.
-                    $result2 = mysql_fetch_object($query);
-                    $existingBasketId = $result2->basket_id;
-                    //Now we have to merge the items from the users new basket to the existing basket and then delete the new basket( prelogin basket ).
-                    $sql = "UPDATE `{$db->name()}`.`dbms_basket_contains` SET `basket_id` = '{$existingBasketId}' WHERE `basket_id` = '{$newBasketId}'";
-                    $query = $db->query($sql);
-                    //Now we update the session info.
-                    $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_basket_id` = '{$existingBasketId}' WHERE `session_id` = '{$_SESSION['session_id']}'";
-                    $query = $db->query($sql);
-                    //Now we dont need the old basket anymore. Just delete it.
-                    $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$newBasketId}'";
-                    $query = $db->query($sql);
-                } else {
-                    //We dont have an existing basket. So we convert this one into the user's one.
-                    $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$newBasketId}'";
-                    $query = $db->query($sql);
-                }
-            } else {
-                // We dont have any item in the basket. We check if there is basket for the user else we make this the users basket. If we already have a basket we delete this one.
-                $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}'";
-                $query = $db->query($sql);
-                if ( mysql_num_rows($query) > 0)    {
-                    //This means we already have a basket. We change the session details.
-                    $result = mysql_fetch_object($query);
-                    $existingBasketId = $result->basket_id;
-                    //Now we update the session info.
-                    $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_basket_id` = '{$existingBasketId}' WHERE `session_id` = '{$_SESSION['session_id']}'";
-                    $query = $db->query($sql);
-                    //Then we delete the old basket.
-                    $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$newBasketId}'";
-                    $query = $db->query($sql);
-                } else {
-                    //We dont have an existing basket. So we convert this one into the user's one.
-                    $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$newBasketId}'";
-                    $query = $db->query($sql);
+                while ( $row = $db->result($query)) {
+                    if ($this->isInBasket($row->basket_item_id))    {
+                        $this->updateItemQuantity($row->basket_item_id, $row->basket_item_qty);
+                    } else {
+                        $this->addItem($row->basket_item_id, $row->basket_item_qty);
+                    }
                 }
                 
+                //Step 2.
+                $sql = "DELETE FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$existingBasketId}'";
+                $query = $db->query($sql);
+                
+                $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$existingBasketId}'";
+                $query = $db->query($sql);
+                
+                //Step 3.
+                $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$basketId}'";
+                $query = $db->query($sql);
             }
-            return true;
+        } else {
+            //No basket with the same userId.
+            /*
+             * 1. Set the current basket's userId to userId.
+             */
+            $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$basketId}'";
+            $query = $db->query($sql);
         }
-        return false;
+        
+
+        
+        //TODO remodel this part.
+        /*
+        if ( $result->basket_count > 0) {
+            //We have some items in the current basket. Now we have to check if the user has a basket.
+            $sql = "SELECT `basket_id` , COUNT(`basket_id`) as uHasBasket FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}'";
+            $query = $db->query($sql);
+            $userBasket = $db->result($sql);
+            if ($userBasket->uHasBasket > 0) {
+                //We have a basket for the user.
+                $existingBasketId = $userBasket->basket_id;
+                //Now we have to merge the items from the users new basket to the existing basket and then delete the new basket( prelogin basket ).
+                $sql = "UPDATE `{$db->name()}`.`dbms_basket_contains` SET `basket_id` = '{$existingBasketId}' WHERE `basket_id` = '{$basketId}'";
+                $query = $db->query($sql);
+                //Now we update the session info.
+                $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_basket_id` = '{$existingBasketId}' WHERE `session_id` = '{$_SESSION['session_id']}'";
+                $query = $db->query($sql);
+                //Now we dont need the old basket anymore. Just delete it.
+                $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$basketId}'";
+                $query = $db->query($sql);
+            } else {
+                //We dont have an existing basket. So we convert this one into the user's one.
+                $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$newBasketId}'";
+                $query = $db->query($sql);
+            }
+        } else {
+            // We dont have any item in the basket. We check if there is basket for the user else we make this the users basket. If we already have a basket we delete this one.
+            $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}'";
+            $query = $db->query($sql);
+            if ( mysql_num_rows($query) > 0)    {
+                //This means we already have a basket. We change the session details.
+                $result = mysql_fetch_object($query);
+                $existingBasketId = $result->basket_id;
+                //Now we update the session info.
+                $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_basket_id` = '{$existingBasketId}' WHERE `session_id` = '{$_SESSION['session_id']}'";
+                $query = $db->query($sql);
+                //Then we delete the old basket.
+                $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$newBasketId}'";
+                $query = $db->query($sql);
+            } else {
+                //We dont have an existing basket. So we convert this one into the user's one.
+                $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$newBasketId}'";
+                $query = $db->query($sql);
+            }
+
+        }*/
+        return true;
     }
         
 }

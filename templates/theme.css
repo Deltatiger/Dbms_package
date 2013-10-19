@@ -139,6 +139,149 @@ body    {
  */
  
 /*
+ * This is the CSS for the showItem Page.
+ */ 
+#mShowItem	{
+	background: #FFEFBF;
+	padding: 10px;
+	margin: 10px;
+	border-radius: 5px;
+}
+ 
+ 
+#mShowItemImageHolder	{
+	width: 200px;
+	float: left;
+	margin-left: 150px;
+	margin-top : 50px;
+	
+}
+
+#mShowItemTableWrapper	{
+	width: 50%;
+	text-align: center;
+	margin-top : 50px;
+	float: right;
+}
+
+#mShowItemRatings	{
+	width: 90%;
+	margin: 0 auto;
+	text-align: left;
+	padding: 5px;
+}
+
+#mShowItemNameHolder	{
+	width: 100%;
+	font-size: 25px;
+	font-weight: bold;
+	text-indent: 100px;
+	background: #191714;
+	color: #FFFFFF;
+	margin-left: -10px;
+}
+
+#mShowItemName	{
+	padding: 0px;
+}
+
+#mShowItemRatings	{
+	max-height: 500px;
+	overflow: auto;
+}
+
+.ratingHolder	{
+	width: 100%;
+	border: 1px solid black;
+	padding: 0px;
+	margin: 0px;
+	margin-bottom: 15px;
+	border-top-right-radius: 1em;
+	border-top-left-radius: 1em;
+	border-bottom-left-radius: 0.5em;
+	border-bottom-right-radius: 0.5em;
+}
+
+.ratingText		{
+	text-indent: 20px;
+	margin: 0px;
+	padding: 0px;
+	padding-top: 2px;
+	padding-bottom: 5px;
+}
+
+.ratingValUserHolder	{
+	padding: 5px;
+	height: 30px;
+	background: #191714;
+	color: white;
+	border-top-right-radius: 1em;
+	border-top-left-radius: 1em;
+}
+
+.ratingValHolder	{
+	width: 40%;
+	float: right;
+	padding: 0px;
+}
+
+.ratingValText	{
+	padding: 0px;
+	margin: 0px;
+	padding-right: 50px;
+	float: right;
+	text-align: right;
+}
+
+.ratingUserHolder	{
+	widht: 50%;
+	float: left;
+	text-align: left;
+}
+
+.ratingUserText	{
+	margin: 0px;
+	padding: 0px;
+	padding-left: 50px;
+	font-weight: bold;
+}
+
+.clearDiv	{
+	clear: both;
+}
+
+.itemStatsTable	{
+	width: 60%;
+	border: 0px;
+	text-align: left;
+}
+
+.itemStatsTable input[type=text]	{
+	width: 50px;
+	vertical-align: middle;
+	background: white;
+	margin-bottom: 0px;
+	margin-left: 20px;
+	color: black;
+}
+
+.itemStatsTable a	{
+	border: 1px;
+	background: #191714;
+	color: white;
+	border-radius: 0.5em;
+	padding: 5px;
+	font-weight: bold;
+	text-shadow: 2px 2px #444444;
+	margin-bottom: 0px;
+	margin-left: 20px;
+}
+
+/*
+ * This is the end of the showItem page.
+ */
+ 
+/*
  * This is the CSS for the Seller | Home Page.
  */
 #mSellerLeft	{
@@ -204,6 +347,7 @@ body    {
 	left: 0px;
 	background: #5E5C62;
 	padding: 5px;
+	color: white;
 }
 
 #navBar	a	{
@@ -263,4 +407,22 @@ body    {
 	padding: 10px;
 	margin: 10px;
 	text-align: center;
+}
+
+.centerBold	{
+	font-size: 23px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.leftBold	{
+	font-size: 23px;
+	font-weight: bold;
+	text-align: left;
+	padding-left: 15px;
+}
+
+.boldLarge	{
+	font-weight: bold;
+	font-size: 24px;
 }

@@ -14,7 +14,7 @@ function generateRandString($length)	{
     return $randomString;
 }
 
-function registerUser($username, $password, $dobDay, $dobMonth, $dobYear , $email)  {
+function registerUser($username, $password, $email)  {
     global $db;
     /*
      * @desc : This function is used to register a new user and login in the current User.
@@ -24,10 +24,7 @@ function registerUser($username, $password, $dobDay, $dobMonth, $dobYear , $emai
     $emailClean = strtolower(trim($email));
     $sql = "SELECT `user_name`, `user_email`, `user_id` FROM `{$db->name()}`.`dbms_user` WHERE LOWER(`user_name`) = '{$usernameClean}' || LOWER(`user_email`) = '{$emailClean}'";
     $query = $db->query($sql);
-    if ( ($dobMonth < 0 && $dobMonth > 12) || ($dobDay < 0 && $dobDay > 31) || $dobYear > 2015 )    {
-        return false;
-    }
-    if (mysql_num_rows($query))     {
+    if (mysql_num_rows($query) > 1)     {
         //We already a row with this things.
         mysql_free_result($query);
         return false;
@@ -37,8 +34,7 @@ function registerUser($username, $password, $dobDay, $dobMonth, $dobYear , $emai
         $emailClean = trim($email);
         //This is the crypt for hashing the password.
         $passwordHash = sha1($password);
-        $dobFormat = sprintf("%04d-%02d-%02d", $dobYear, $dobMonth, $dobDay);
-        $sql = "INSERT INTO `{$db->name()}`.`dbms_user`(`user_name`,`user_pass`,`user_dob`,`user_email`) VALUES ('{$usernameClean}','{$passwordHash}','{$dobFormat}','{$emailClean}')";
+        $sql = "INSERT INTO `{$db->name()}`.`dbms_user`(`user_name`,`user_pass`,`user_email`) VALUES ('{$usernameClean}','{$passwordHash}','{$emailClean}')";
         $query = $db->query($sql);
     }
     return true;

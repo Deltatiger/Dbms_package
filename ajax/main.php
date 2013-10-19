@@ -78,7 +78,7 @@
             }
             $opts .= '<div class="itemHolder">';
             $opts .= '  <div class="itemImageHolder"> <img src="resources/images/'.$row->image_name.'.'.$row->image_type.'" height=150 width=150/> </div>';
-            $opts .= '  <p class="itemNameHolder"> <a href="showItem.php?id="'.$row->item_id.'">'.$row->item_name.'</a></p>';
+            $opts .= '  <p class="itemNameHolder"> <a href="showItem.php?id='.$row->item_id.'">'.$row->item_name.'</a></p>';
             $opts .= '  <div class="itemPriceQtyHolder">';
             $opts .= '      <div class="itemPriceLeft"><p class="itemPriceHolder"> &#8377; '.$row->item_price.'</p></div>';
             $opts .= '      <div class="itemQtyRight"><p class="itemQtyHolder"> Stock :'.$row->item_stock.'</p></div>';
@@ -102,5 +102,38 @@
         }
         $table .= '</table></div>';
         echo $table;
+    } elseif(isset($_POST['itemId']) && isset($_POST['itemQty']))   {
+        /*
+         * Page : showItem.php
+         * Sub Category : Add the given item into the basket.
+         */
+        $itemId = trim($_POST['itemId']);
+        $itemQty = trim($_POST['itemQty']);
+        if (isset($_POST['forceInsert']))   {
+            $forceInsert = true;
+        } else {
+            $forceInsert = false;
+        }
+        $inBasket = $session->uBasket->isInBasket($itemId);
+        //Now check if already in or not and do the required action.
+        if ( $inBasket && $forceInsert == false) {
+            //This asks for a confirmation dialogue.
+            echo -1;
+        } elseif ($inBasket && $forceInsert == true){
+            //This has a force input hence procced to insert.
+            $session->uBasket->updateItemQuantity($itemId, $itemQty);
+            echo 1;
+        } else {
+            //First time insertion.
+            $session->uBasket->addItem($itemId, $itemQty);
+            echo 1;
+        }
+    } elseif(isset($_POST['refreshBasketCount']))   {
+        /*
+         * Page : showItem.php
+         * Sub Category : This updates the basket count.
+         */
+        $data = 'My Basket ['.$session->uBasket->getBasketCount().']';
+        echo $data;
     }
 ?>

@@ -11,7 +11,7 @@
     </div>
     <div id="mIndexRight">
         <div id="mRightIndexContent">
-            Test
+            Click on a Category To Begin.
         </div>
     </div>
 </div>

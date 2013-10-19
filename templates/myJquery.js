@@ -91,4 +91,38 @@ $(document).ready(function(){
             });
         }
     });
+    
+    $('#addItemBasket').on({
+        'click' : function()    {
+            //Used to add items to the basket.
+            var itemId = $('#itemId').val();
+            var itemQty = $('#itemQty').val();
+            if(!$.isNumeric(itemQty)) { // Check to make sure quantity is a number or not.
+                alert('Quantity should be a number.');
+                $('#itemQty').val(1);
+            } else {
+                $.post('ajax/main.php', {itemId : itemId, itemQty : itemQty}, function(result)    {
+                   //This is the Ajax part.
+                   if ( result == '1')  {
+                       //All okay.
+                       alert('Item succesfully added to the Basket.');
+                   } else if (result == '-1')   {
+                       var conf = confirm('Item already exists in the Basket. Add again ?');
+                       if ( conf == true)   {
+                           //Another post to force it into the basket.
+                           $.post('ajax/main.php', {itemId : itemId, itemQty : itemQty, forceInsert : true}, function(result)   {
+                               alert('Item Succesfully added again to the Basket.');
+                           });
+                       }
+                   }
+                });
+                //Have to take care of the Basket count.
+                $.post('ajax/main.php', {refreshBasketCount : true}, function(result)   {
+                    $('#myBasketLink').data(result);
+                    alert(result);
+                });
+            }
+            
+        }
+    });
 });

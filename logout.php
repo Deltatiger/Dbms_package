@@ -11,6 +11,7 @@
      //First we unset the session of the user.
      $sessionId = $_SESSION['session_id'];
      unset($_SESSION['session_id']);
+     session_destroy();
      $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
      $db->query($sql);
      

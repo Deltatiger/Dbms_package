@@ -6,21 +6,18 @@
         header('Location:index.php');
     }
 
-    if (isset($_POST['submit'])) {
+    if (isset($_POST['register'])) {
         //We have a submit button clck
-        $username = $_POST['uname'];
-        $userpass = $_POST['upass'];
-        $userEmail = $_POST['uemail'];
-        $userDoBY = intval($_POST['udobY']);
-        $userDoBM = intval($_POST['udobM']);
-        $userDoBs = intval($_POST['udobD']);
+        $username = $_POST['username'];
+        $userpass = $_POST['password'];
+        $userEmail = $_POST['email'];
         
-        if (registerUser($username, $userpass, $userDoBs, $userDoBM, $userDoBY, $userEmail))    {
+        if (registerUser($username, $userpass, $userEmail))    {
             //This is the pass condition.
             $session->login($username, $userpass);
             header('Location:index.php');
         } else {
-            $template->setTemplateVar($message, "Error Occured. Try again with Valid Data.");
+            $template->setTemplateVar('message', "Error Occured. Try again with Valid Data.");
         }
     }
     
