@@ -25,12 +25,13 @@ class Session {
             $sessionId = $_SESSION['session_id'];
             $sql = "SELECT `session_last_active`, `session_create_ip`, `session_browser` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
             $query = $db->query($sql);
-            if ( mysql_num_rows($query) == 0)    {
+            if ( $db->numRows($query) == 0)    {
                 //This means that the session does not exist. Unset it an make a new session.
+                $db->freeResults($query);
                 $this->createNewSession();
             } else {
                 //He has a valid session in the Db. Check if it is still within 5 min activity and let him pass.
-                $result = mysql_fetch_object($query);
+                $result = $db->result($query);
                 if ( $currentTime - intval($result->session_last_active) > 300 /* 5 Mins */)    {
                     //This means that the current Session is over due. Remove it and recreate it.
                     $this->createNewSession();
@@ -41,17 +42,19 @@ class Session {
                         $this->createNewSession();
                     } else {
                         //This means that the session is valid. Update the time and let him pass.
+                        $db->freeResults($query);
                         $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_last_active` = '{$currentTime}' WHERE `session_id` = '{$sessionId}'";
                         if ( ! $db->query($sql) )   {
+                            $db->freeResults($query);
                             die('Session Update Failed. Contact Admin.');
                         }
                         $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
                         $query = $db->query($sql);
-                        $result = mysql_fetch_object($query);
+                        $result = $db->result($query);
                         $this->uBasket = new Basket($result->session_basket_id);
                     }
                 }
-                mysql_free_result($query);
+                $db->freeResults($query);
             }
         } else {
             //This means we create a new session ID.
@@ -80,9 +83,11 @@ class Session {
             // This means that the user is a seller.
             $result = $db->result($query);
             if ($result->seller_approved  == 1) {
+                $db->freeResults($query);
                 return true;
             }
         }
+        $db->freeResults($query);
         return false;
     }
     
@@ -94,11 +99,13 @@ class Session {
             $sessionId = $_SESSION['session_id'];
             $sql = "SELECT `session_login_stat` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$sessionId}'";
             $query = $db->query($sql);
-            if (mysql_num_rows($query) > 0) {
+            if ($db->numRows($query) > 0) {
                 //Return the valid session.
                 $result = mysql_fetch_object($query);
+                $db->freeResults($query);
                 return ($result->session_login_stat == '1');
             } else {
+                $db->freeResults($query);
                 return False;
             }
         }
@@ -119,8 +126,10 @@ class Session {
             if (mysql_num_rows($query) > 0) {
                 //We proceed to log the user in.
                 $result = mysql_fetch_object($query);
+                $db->freeResults($query);
                 $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_login_stat` = '1' , `session_user_id` = '{$result->user_id}' WHERE `session_id` = '{$_SESSION['session_id']}'";
                 $query = $db->query($sql);
+                $db->freeResults($query);
                 // Now we also have to update the basket from . TODO : This.
                 $this->uBasket->setBasketUser();
                 return true;
@@ -137,9 +146,10 @@ class Session {
             //We have a session. We return the user_id if he has a login status 1.
             $sql = "SELECT `session_user_id`, `session_login_stat` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
             $query = $db->query($sql);
-            if ( mysql_num_rows($query) > 0)    {
-                //Bingo
+            if ( $db->numRows($query) > 0)    {
+                //Match Found.
                 $result = $db->result($query);
+                $db->freeResults($query);
                 if ( $result->session_login_stat == '1')    {
                     return $result->session_user_id;
                 } else {
@@ -147,6 +157,7 @@ class Session {
                 }
             } else {
                 //We dont have any rows. We unset the session.
+                $db->freeResults($query);
                 unset($_SESSION['session_id']);
                 return 0;
             }
@@ -162,6 +173,7 @@ class Session {
             $sql = "SELECT `user_name` FROM `{$db->name()}`.`dbms_user` , `{$db->name()}`.`dbms_session` WHERE `dbms_user`.`user_id` = `dbms_session`.`session_user_id` AND `dbms_session`.`session_id` = '{$_SESSION['session_id']}' AND `dbms_session`.`session_login_stat` = '1'";
             $query = $db->query($sql);
             $result = $db->result($query);
+            $db->freeResults($query);
             if ( $db->numRows($query) > 0)  {
                 return $result->user_name;
             } else {
@@ -197,14 +209,17 @@ class Session {
                         $this->uBasket = new Basket(-1);
                     } else {
                         //This is a user who is not logged in. He will be using the same Basket as always.
+                        $db->freeResults($query);
                         $sql = "SELECT `session_basket_id` FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
                         $query = $db->query($sql);
                         $result = $db->result($query);
                         $this->uBasket = new Basket($result->session_basket_id);
                     }
                 }
+                $db->freeResults($query);
                 $sql = "DELETE FROM `{$db->name()}`.`dbms_session` WHERE `session_id` = '{$_SESSION['session_id']}'";
                 $db->query($sql);
+                $db->freeResults($query);
                 /*
                 //We have to delete this from the Db and make a new one.
                 //First we check if the user had any items in his Basket.
@@ -245,6 +260,7 @@ class Session {
                 die('Session Creation Problem. Contact Admin.');
             }
             $_SESSION['session_id'] = $newSesId;
+            $db->freeResults($query);
         }
     }
     
@@ -257,12 +273,13 @@ class Session {
         $sessionId = $_SESSION['session_id'];
         $sql = "SELECT `user_name` FROM `{$db->name()}`.`dbms_user`, `{$db->name()}`.`dbms_session` WHERE `dbms_session`.`session_user_id` = `dbms_user`.`user_id` AND `session_id` = '{$sessionId}'";
         $query = $db->query($sql);
-        if (mysql_num_rows($query) > 0)     {
-            $result = mysql_fetch_object($query);
+        if ($db->numRows($query) > 0)     {
+            $result = $db->result($query);
             $userName = $result->user_name;
-            mysql_free_result($query);
+            $db->freeResults($query);
             return $userName;
         } else {
+            $db->freeResults($query);
             return False;
         }
     }
@@ -279,9 +296,11 @@ class Session {
 
         while($db->numRows($query) > 0) {
             $stringToCrypt = generateRandString(6);
+            $db->freeResults($query);
             $encrpytedString = sha1($stringToCrypt);
             $query = $db->query($sql);
         }
+        $db->freeResults($query);
         return $encrpytedString;
     }
 }

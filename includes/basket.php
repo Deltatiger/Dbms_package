@@ -57,6 +57,7 @@ class Basket  {
         $sql = "SELECT COUNT(`basket_item_id`) as itemCount FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$this->basketId}'";
         $query = $db->query($sql);
         $result = $db->result($query);
+        $db->freeResults($query);
         return $result->itemCount;
     }
     
@@ -66,6 +67,7 @@ class Basket  {
         $sql = "SELECT COUNT(`basket_item_id`) as itemCount FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$this->basketId}' AND `basket_item_id` = '{$itemId}'";
         $query = $db->query($sql);
         $result = $db->result($query);
+        $db->freeResults($query);
         if ($result->itemCount > 0)     {
             return true;
         } else {
@@ -86,6 +88,7 @@ class Basket  {
             $result = mysql_fetch_object($query);
             $newBasketId = $result->maxBasketId + 1;
         }
+        $db->freeResults($query);
         $sql = "INSERT INTO `{$db->name()}`.`dbms_basket` VALUES ({$newBasketId}, NULL, '0')";
         $query = $db->query($sql);
         return $newBasketId;
@@ -110,12 +113,14 @@ class Basket  {
             $uHasBasket = $db->result($query);
             $existingBasketId = $uHasBasket->basket_id;
             
+            $db->freeResults($query);
             $sql = "SELECT COUNT(`basket_item_id`) as basketItemCount FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$existingBasketId}'";
             $query = $db->query($sql);
             $result = $db->result($query);
             
             if($result->basketItemCount > 0)    {
                 //There are some items in the basket.
+                $db->freeResults($query);
                 /*
                  * 1. Reinsert all items in the `existingBasketId` into the current Basket.
                  * 2. Delete the `existingBasket` 
@@ -132,7 +137,7 @@ class Basket  {
                         $this->addItem($row->basket_item_id, $row->basket_item_qty);
                     }
                 }
-                
+                $db->freeResults($query);
                 //Step 2.
                 $sql = "DELETE FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$existingBasketId}'";
                 $query = $db->query($sql);

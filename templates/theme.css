@@ -65,7 +65,7 @@ body    {
 	padding-left: 20px;
 }
 
-#catOptions  a, a:link, a:active	{
+#catOptions  a, #catOptions a:link, #catOptions a:active	{
 	color: black;
 	text-decoration: none;
 	font-size: 18px;
@@ -265,7 +265,7 @@ body    {
 	color: black;
 }
 
-.itemStatsTable a	{
+.itemStatsTable a, .itemStatsTable a:link, .itemStatsTable a:visited{
 	border: 1px;
 	background: #191714;
 	color: white;
@@ -274,7 +274,6 @@ body    {
 	font-weight: bold;
 	text-shadow: 2px 2px #444444;
 	margin-bottom: 0px;
-	margin-left: 20px;
 }
 
 /*
@@ -355,7 +354,7 @@ body    {
 	text-decoration: none;
 }
 
-#navBar	a:link	, a:visited{
+#navBar	a:link	, #navBar a:visited{
 	color: #FFFFFF;
 	text-decoration: none;
 }
@@ -392,8 +391,80 @@ body    {
  * End of navbar.
  */
 
+/*
+ * This is the CSS for the myBasket page.
+ */
+#mBasketWrapper	{
+	width: 100%;
+	background: #FFEFBF;
+	padding: 5px;
+}
+
+#mBasketLeft	{
+	width: 20%;
+	padding: 5px;
+	float: left;
+	margin-top: 20px;
+}
+
+#mBasketLeft ul 	{
+	padding: 5px;
+	margin: 5px;
+	list-style-type: none;
+}
+
+/*#mBasketLeft li 	{
+	padding: 5px;
+	margin: 0px;
+}*/
+
+#mBasketRight	{
+	width: 75%;
+	padding: 5px;
+	float:left;
+}
 
 
+#mBasketSelections	a, #mBasketSelections a:link, #mBasketSelections a:visited	{
+	color: black;
+	font-size: 20px;
+	text-decoration: none;
+}
+
+/* The table that holds the item details */
+
+#mBasketTable	{
+	width: 100%;
+	border: 0px;
+	margin-top: 20px;
+}
+
+#mBasketTable td , tr, th 	{
+	border: 1px solid black;
+}
+
+#mBasketTable td.mBasketTableImage	{
+	width: 25%;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#mBasketTable td.mBasketTableName	{
+	width: 35%;
+	vertical-align: middle;
+	text-align: left;
+}
+
+#mBasketTable td.mBasketTableQty , td.mBasketTablePrice, td.mBasketTableTCost{
+	width: 10%;
+	vertical-align: middle;
+	text-align:center;
+}
+
+#mBasketTable td.mBasketTableTotal	{
+	width: 10%;
+	text-align: center;
+}
 /*
  * This is some styles that are used on many pages.
  */
@@ -410,7 +481,7 @@ body    {
 }
 
 .centerBold	{
-	font-size: 23px;
+	font-size: 22px;
 	font-weight: bold;
 	text-align: center;
 }
@@ -425,4 +496,9 @@ body    {
 .boldLarge	{
 	font-weight: bold;
 	font-size: 24px;
+}
+
+.centerTableCell	{
+	width: 100%;
+	text-align: center;
 }

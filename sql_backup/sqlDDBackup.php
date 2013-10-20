@@ -127,7 +127,30 @@ $sql[10] = "CREATE TABLE dbms_payments (
             FOREIGN KEY (`payment_basket_id`) REFERENCES `dbms_package`.`dbms_basket`(`basket_id`)
     );";
 
-for ( $i = 0 ; $i <= 10 ; $i++)   {
+$sql[11] = "DELIMITER //
+            CREATE PROCEDURE `dbms_package`.`display_basket_items`(IN basketId INT)
+            BEGIN
+                SELECT `item_name` , `item_price`, `basket_item_qty`, `image_name`, `image_type`
+                    FROM `dbms_package`.`dbms_item`,
+                        `dbms_package`.`dbms_basket_contains`,
+                        `dbms_package`.`dbms_image`
+                    WHERE `dbms_basket_contains`.`basket_item_id` = `dbms_item`.`item_id` AND
+                        `dbms_image`.`image_id` = `dbms_item`.`item_image_id` AND
+                        `dbms_basket_contains`.`basket_id` = basketId;
+            END//";
+
+$sql[12] = "DELIMITER //
+            CREATE PROCEDURE `dbms_package`.`get_total_basket_price`	(
+                    IN basket_id INT)
+            BEGIN
+                SELECT SUM(total_cost) as resultTable.total_basket_cost
+                    FROM (SELECT basket_item_qty * item_price AS total_cost
+                            FROM `dbms_package`.`dbms_basket_contains` , `dbms_package`.`dbms_item`
+                            WHERE `dbms_basket_contains`.`basket_item_id` = `dbms_item`.`item_id` AND
+                                    `dbms_basket_contains`.`basket_id` = basket_id) as resultTable;
+            END//";
+
+for ( $i = 0 ; $i <= 12 ; $i++)   {
     $query = $db->query($sql[$i]);
     echo $query;
 }
