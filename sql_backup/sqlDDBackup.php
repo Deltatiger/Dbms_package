@@ -98,9 +98,10 @@ $sql[7] = "CREATE TABLE dbms_item  (
 
 // This is the relation that connects Basket and Items
 $sql[8] = "CREATE TABLE dbms_basket_contains   (
-            `basket_id`         int NOT NULL,
-            `basket_item_id`    int NOT NULL,
-            `basket_item_qty`   int NOT NULL,
+            `basket_id`             int NOT NULL,
+            `basket_item_id`        int NOT NULL,
+            `basket_item_qty`       int NOT NULL,
+            `basket_item_shipped`   BOOLEAN NOT NULL DEFAULT 0,
             PRIMARY KEY (`basket_id`, `basket_item_id`),
             FOREIGN KEY (`basket_id`) REFERENCES `dbms_package`.`dbms_basket`(`basket_id`),
             FOREIGN KEY (`basket_item_id`) REFERENCES `dbms_package`.`dbms_item`(`item_id`)
@@ -149,6 +150,44 @@ $sql[12] = "DELIMITER //
                             WHERE `dbms_basket_contains`.`basket_item_id` = `dbms_item`.`item_id` AND
                                     `dbms_basket_contains`.`basket_id` = basket_id) as resultTable;
             END//";
+
+$sql[13] = "DELIMITER $$
+            CREATE PROCEDURE `dbms_package`.`updateStockProcedure`(IN basketId INT)
+            BEGIN
+                    DECLARE itemId INT;
+                    DECLARE itemQty INT;
+                    DECLARE finished INTEGER DEFAULT 0;
+                    DECLARE itemCursor CURSOR FOR SELECT `basket_item_id`, `basket_item_qty` FROM `dbms_package`.`dbms_basket_contains` WHERE `basket_id` = basketId;
+                    DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+
+                    OPEN itemCursor;
+
+                    read_loop: LOOP
+                            FETCH itemCursor INTO itemId, itemQty;
+                            IF finished = 1 THEN
+                                    LEAVE read_loop;
+                            END IF;
+                            /* Now we have to subtract the quantity of item from the stock. Stock is check before apporval so no need to check again. */
+                            UPDATE `dbms_package`.`dbms_item` SET `item_stock` = `item_stock` - itemQty WHERE `item_id` = itemId;
+                    END LOOP;
+            END$$
+            DELIMITER ;";
+
+$sql[14] = "DELIMITER $$
+            CREATE TRIGGER `dbms_package`.`updateStockOnOrder`
+                    AFTER UPDATE ON `dbms_package`.`dbms_basket`
+                    FOR EACH ROW
+                    BEGIN
+                            /*This trigger is used to subtract the qty of items in the baskets from the ones in the item table.
+                             *First we declare the cursors to get all the items from the baskets. */
+
+                            IF NEW.`basket_clear` != OLD.`basket_clear` THEN
+                                    IF NEW.`basket_clear` = -1 THEN
+                                            CALL updateStockProcedure(NEW.`basket_id`);
+                                    END IF;
+                            END IF;
+                    END$$
+            DELIMITER ;";
 
 for ( $i = 0 ; $i <= 12 ; $i++)   {
     $query = $db->query($sql[$i]);

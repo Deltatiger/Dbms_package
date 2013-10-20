@@ -27,7 +27,7 @@ class Basket  {
         //This function is used to add an item to the Basket.
         //We first have to check if the item is already in the Basket.
         global $db;
-        $sql = "INSERT INTO `{$db->name()}`.`dbms_basket_contains` VALUES ({$this->basketId}, {$itemId}, {$itemQty})";
+        $sql = "INSERT INTO `{$db->name()}`.`dbms_basket_contains` VALUES ({$this->basketId}, {$itemId}, {$itemQty}, 0)";
         $query = $db->query($sql);
         return True;
     }
@@ -85,7 +85,7 @@ class Basket  {
         if (mysql_num_rows($query) < 0)    {
             $newBasketId = 1;
         } else {
-            $result = mysql_fetch_object($query);
+            $result = $db->result($query);
             $newBasketId = $result->maxBasketId + 1;
         }
         $db->freeResults($query);
@@ -106,7 +106,7 @@ class Basket  {
         $userId = $session->getUserId();
         $basketId = $this->basketId;
         //First we have to check if the current userId has an already existing Basket.
-        $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}'";
+        $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}' AND `basket_clear` = '0'";
         $query = $db->query($sql);
         if ( $db->numRows($query) == 1) {
             //We seem to have a basket. Now to check if that basket has any items.

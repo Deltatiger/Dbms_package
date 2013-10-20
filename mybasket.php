@@ -14,7 +14,7 @@
     if($db->numRows($query) <= 0)   {
         //No items in the basket.
         $options .= '<tr><td class="centerTableCell"> No items in the Basket </td></tr>';
-        $template->setTemplateVar('canShowBasketPay', false);
+        $template->setTemplateVar('canShowBasketPay', '0');
     } else {
         while($row = $db->result($query))   {
             $options .= '<tr class="mBasketTableRow">';
@@ -36,7 +36,7 @@
             $result = $result->total_basket_cost;
         }
         $options .= '<tr><td class="mBasketTableImage"></td><td class="mBasketTableName"> </td> <td class="mBasketTableQty"></td><td class="mBasketTablePrice">Total Cost : </td><td class="mBasketTableTotal">&#8377; '.$result.'</td></tr>';
-        $template->setTemplateVar('canShowBasketPay', true);
+        $template->setTemplateVar('canShowBasketPay', '1');
     }
     $options .= '</table>';
     //The Procedure call problem.

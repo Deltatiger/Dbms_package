@@ -44,6 +44,12 @@ class Template {
         }
     }
     
+    public function getVar($varName)    {
+        if ( isset($this->templateVars[$varName]) )     {
+            return $this->templateVars[$varName];
+        }
+    }
+    
     //This function is used to load the whole page where required.
     public function loadPage()  {
         //We have to insert the following pages.

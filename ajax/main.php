@@ -135,7 +135,26 @@
          */
         $data = 'My Basket ['.$session->uBasket->getBasketCount().']';
         echo $data;
-    } elseif(isset($_POST['basketBuyId']))  {
+    } elseif(isset($_POST['basketBuyid']))  {
+        /*
+         * Page : myBasket.php
+         * Sub Category : This Pays for the current basket and changes the
+         */
+        if (!$session->isLoggedIn())    {
+            //Cannot purchase until logged in.
+            echo -1;
+        }
+        /*
+         * 1. Change the basket status to pending.
+         * 2. Create a new Basket for the logged in user.
+         */
+        //Step 1.
+        $currentBasketId = $session->uBasket->getBasketId();
+        $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_clear` = '-1' WHERE `basket_id` = '{$currentBasketId}'";
+        $query = $db->query($sql);
         
+        //Step 2.
+        $session->uBasket = new Basket(-1);
+        $session->uBasket->setBasketUser();
     }
 ?>

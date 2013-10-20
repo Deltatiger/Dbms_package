@@ -11,7 +11,7 @@
         </div>
         <div id="mBasketRight">
             <?php $this->printVar('items'); ?>
-            <?php if ($this->printVar('canShowBasketPay')) { ?>
+            <?php if ($this->getVar('canShowBasketPay') == '1') { ?>
             <div id="mBasketPayHolder">
                 <a href="#" id="mBasketPay" class=""> Pay For Basket </a>
             </div>

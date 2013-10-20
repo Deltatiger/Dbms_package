@@ -132,8 +132,10 @@ $(document).ready(function(){
             var basketId = $('#currentBasket').data('basketid');
             $.post('ajax/main.php', {basketBuyid : basketId}, function(result) {
                 //User should be logged in. Else ask them to login.
-                if (result == '-1')   {
+                alert(result);
+                if (result === '-1')   {
                     alert('You must be logged in to Purchase. Please login / register.');
+                    window.location = 'login.php';
                 } else {
                     alert('Succesfully purchased all Items. Shipping date will be sent to you.');
                     window.location = 'index.php';
