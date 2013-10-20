@@ -7,15 +7,17 @@
      * It also displays all the previous Baskets if the user is logged in.
      */
     $basketId = $session->uBasket->getBasketId();
-    $options = '<table id="mBasketTable">';
+    $template->setTemplateVar('currentBasketId', $basketId);
     
+    $options = '<table id="mBasketTable">';
     $query = $db->query("CALL display_basket_items({$basketId})");
     if($db->numRows($query) <= 0)   {
         //No items in the basket.
         $options .= '<tr><td class="centerTableCell"> No items in the Basket </td></tr>';
+        $template->setTemplateVar('canShowBasketPay', false);
     } else {
         while($row = $db->result($query))   {
-            $options .= '<tr>';
+            $options .= '<tr class="mBasketTableRow">';
             $options .= '<td class="mBasketTableImage"> <img src="resources/images/'.$row->image_name.'.'.$row->image_type.'" height=150px width=150px /> </td>';
             $options .= '<td class="mBasketTableName">'.$row->item_name.'</td>';
             $options .= '<td class="mBasketTableQty">'.$row->basket_item_qty.'</td>';
@@ -34,9 +36,9 @@
             $result = $result->total_basket_cost;
         }
         $options .= '<tr><td class="mBasketTableImage"></td><td class="mBasketTableName"> </td> <td class="mBasketTableQty"></td><td class="mBasketTablePrice">Total Cost : </td><td class="mBasketTableTotal">&#8377; '.$result.'</td></tr>';
+        $template->setTemplateVar('canShowBasketPay', true);
     }
     $options .= '</table>';
-    
     //The Procedure call problem.
     $db->freeResults($query);
     $db->reconnect();
