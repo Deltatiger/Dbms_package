@@ -5,8 +5,16 @@
             <p class="centerBold">Options</p>
             <ul class="mBasketSelections">
                 <li> <a href="#" class="mBasketOldLinks" id="currentBasket" data-basketid="<?php $this->printVar('currentBasketId'); ?>"> Current Basket </a> </li>
-                <hr />
-                <?php $this->printVar('pBaskets'); ?>
+            </ul>
+            <hr />
+            <p class="centerBold">Shipped Baskets</p>
+            <ul class="mBasketSelections">
+                <?php $this->printVar('pendingBaskets'); ?>
+            </ul>
+            <hr />
+            <p class="centerBold">Shipped Baskets</p>
+            <ul class="mBasketSelections">
+                <?php $this->printVar('shippedBaskets'); ?>
             </ul>
         </div>
         <div id="mBasketRight">

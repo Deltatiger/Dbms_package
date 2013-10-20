@@ -44,24 +44,38 @@
     $db->reconnect();
     $template->setTemplateVar('items', $options);
     
+    
     //We get all the baskets of the user if he is logged in.
-    $basketLinks = '';
+    $pendingBaskets = '';
+    $shippedBaskets = '';
     if($session->isLoggedIn())  {
-        $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$session->getUserId()}' AND `basket_clear` = '1' ORDER BY `basket_id` DESC";
+        $sql = "SELECT `basket_id`, `basket_clear` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$session->getUserId()}' AND `basket_clear` != '0' ORDER BY `basket_id` DESC";
         $query = $db->query($sql);
-        $basketCount = 0;
         if($db->numRows($query) <= 0)   {
-            $basketLisks .= '<li> No Previous Baskets Found </li>';
+            $shippedBaskets .= '<li> No Baskets Found </li>';
+            $pendingBaskets .= '<li> No Baskets Found </li>';
         } else {
             while($row = $db->result($query))   {
-                $basketLinks .= '<li> <a href="#" class="mBasketOldLinks" data-basketid="'.$row->basket_id.'"> Basket '.$row->basket_id.'</a></li>';
+                if ($row->basket_clear == 1)    {
+                    $shippedBaskets .= '<li> <a href="#" class="mBasketOldLinks" data-basketid="'.$row->basket_id.'"> Basket '.$row->basket_id.'</a></li>';
+                } else {
+                    $pendingBaskets .= '<li> <a href="#" class="mBasketPendingLinks" data-basketid="'.$row->basket_id.'"> Basket '.$row->basket_id.'</a></li>';;
+                }
+            }
+            if (strlen($shippedBaskets) <= 0)   {
+                $shippedBaskets .= '<li> No Baskets Found </li>';
+            }
+            if (strlen($pendingBaskets) <= 0)   {
+                $pendingBaskets .= '<li> No Baskets Found </li>';
             }
         }
         $db->freeResults($query);
     } else {
-        $basketLinks .= '<li> Login to See previous Baskets </li>';
+        $shippedBaskets .= '<li> Login to See previous Baskets </li>';
+        $pendingBaskets .= '<li> Login to See previous Baskets </li>';
     }
-    $template->setTemplateVar('pBaskets', $basketLinks);
+    $template->setTemplateVar('pendingBaskets', $pendingBaskets);
+    $template->setTemplateVar('shippedBaskets', $shippedBaskets);
     
     $template->setPage('basket');
     $template->setPageTitle('My Basket');

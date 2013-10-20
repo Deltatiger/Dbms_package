@@ -35,6 +35,7 @@ class Basket  {
     public function removeItem($itemId) {
         //This function is used to remove an item to the Basket.
         //We can just remove without checking if the item is actually in the DB or not.
+        global $db;
         $sql = "DELETE FROM `{$db->name()}`.`dbms_basket_contains` WHERE `basket_id` = '{$this->basketId}' AND `basket_item_id` = '{$itemId}'";
         $query = $db->query($sql);
     }
@@ -108,7 +109,7 @@ class Basket  {
         //First we have to check if the current userId has an already existing Basket.
         $sql = "SELECT `basket_id` FROM `{$db->name()}`.`dbms_basket` WHERE `basket_user_id` = '{$userId}' AND `basket_clear` = '0'";
         $query = $db->query($sql);
-        if ( $db->numRows($query) == 1) {
+        if ( $db->numRows($query) >= 1) {
             //We seem to have a basket. Now to check if that basket has any items.
             $uHasBasket = $db->result($query);
             $existingBasketId = $uHasBasket->basket_id;
@@ -145,16 +146,27 @@ class Basket  {
                 $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$existingBasketId}'";
                 $query = $db->query($sql);
                 
-                //Step 3.
-                $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$basketId}'";
-                $query = $db->query($sql);
+            } else {
+                //There exists a Basket with 0 items. Delete the Basket.
+                $sql = "DELETE FROM `{$db->name()}`.`dbms_basket` WHERE `basket_id` = '{$existingBasketId}'";
+                $db->query($sql);
             }
+            
+            //Step 3.
+            $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$basketId}'";
+            $query = $db->query($sql);            
         } else {
             //No basket with the same userId.
             /*
              * 1. Set the current basket's userId to userId.
+             * 2. After buying the Basket is changed. So set the sessions basketId to the same.
              */
+            //Step 1
             $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_user_id` = '{$userId}' WHERE `basket_id` = '{$basketId}'";
+            $query = $db->query($sql);
+            
+            //Step 2
+            $sql = "UPDATE `{$db->name()}`.`dbms_session` SET `session_basket_id` = '{$basketId}' WHERE `session_id` = '{$_SESSION['session_id']}'";
             $query = $db->query($sql);
         }
         

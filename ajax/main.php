@@ -143,18 +143,40 @@
         if (!$session->isLoggedIn())    {
             //Cannot purchase until logged in.
             echo -1;
+        } else {
+            /*
+             * 0. Check if all items are available.
+             * 1. Change the basket status to pending.
+             * 2. Create a new Basket for the logged in user.
+             */
+            $currentBasketId = $session->uBasket->getBasketId();
+            //Step 0.
+            $sql = "SELECT `item_id`
+                        FROM `{$db->name()}`.`dbms_basket_contains`,
+                            `{$db->name()}`.`dbms_item`
+                        WHERE `dbms_basket_contains`.`basket_item_id` = `dbms_item`.`item_id` AND
+                            `dbms_basket_contains`.`basket_id` = '{$currentBasketId}' AND
+                            `dbms_basket_contains`.`basket_item_qty` > `dbms_item`.`item_stock`";
+            $query = $db->query($sql);
+            if ($db->numRows($query) > 0)    {
+                //Some items are not having required quantity.
+                //We remove them from the Basket and report to the user.
+                while ($row = $db->result($query))  {
+                    $session->uBasket->removeItem($row->item_id);
+                }
+                $db->freeResults($query);
+                echo -2;
+            } else {
+                //Step 1.
+                $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_clear` = '-1' WHERE `basket_id` = '{$currentBasketId}'";
+                $query = $db->query($sql);
+
+                //Step 2.
+                $session->uBasket = new Basket(-1);
+                $session->uBasket->setBasketUser();
+                echo $session->uBasket->getBasketId();
+                echo 1;
+            }
         }
-        /*
-         * 1. Change the basket status to pending.
-         * 2. Create a new Basket for the logged in user.
-         */
-        //Step 1.
-        $currentBasketId = $session->uBasket->getBasketId();
-        $sql = "UPDATE `{$db->name()}`.`dbms_basket` SET `basket_clear` = '-1' WHERE `basket_id` = '{$currentBasketId}'";
-        $query = $db->query($sql);
-        
-        //Step 2.
-        $session->uBasket = new Basket(-1);
-        $session->uBasket->setBasketUser();
     }
 ?>

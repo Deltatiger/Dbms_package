@@ -131,7 +131,7 @@ $sql[10] = "CREATE TABLE dbms_payments (
 $sql[11] = "DELIMITER //
             CREATE PROCEDURE `dbms_package`.`display_basket_items`(IN basketId INT)
             BEGIN
-                SELECT `item_name` , `item_price`, `basket_item_qty`, `image_name`, `image_type`
+                SELECT `item_name` , `item_price`, `basket_item_qty`, `image_name`, `image_type`, `basket_item_ship_id`
                     FROM `dbms_package`.`dbms_item`,
                         `dbms_package`.`dbms_basket_contains`,
                         `dbms_package`.`dbms_image`

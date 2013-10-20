@@ -136,8 +136,11 @@ $(document).ready(function(){
                 if (result === '-1')   {
                     alert('You must be logged in to Purchase. Please login / register.');
                     window.location = 'login.php';
-                } else {
-                    alert('Succesfully purchased all Items. Shipping date will be sent to you.');
+                } else if(result == '-2') {
+                    alert('Some items in the basket are not available. (Went out of stock). Check again and continue.');
+                    window.location = 'mybasket.php';
+                } else if(result == '1')    {
+                    alert('Successfully paid for all Items. You will receive the Shipment Number soon.');
                     window.location = 'index.php';
                 }
             });
