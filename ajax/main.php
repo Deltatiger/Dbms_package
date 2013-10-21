@@ -178,5 +178,133 @@
                 echo 1;
             }
         }
+    } elseif(isset($_POST['shippedBasketShow']))    {
+        /*
+         * Page : myBasket.php
+         * Sub Category : Shows the shipped baskets details. Same as the regular display.
+         */
+        $basketId = $_POST['shippedBasketShow'];
+        $options = '<table id="mBasketTable">';
+        $query = $db->query("CALL display_basket_items({$basketId})");
+        if($db->numRows($query) <= 0)   {
+            //No items in the basket.
+            $options .= '<tr><td class="centerTableCell"> No items in the Basket </td></tr>';
+            $template->setTemplateVar('canShowBasketPay', '0');
+        } else {
+            while($row = $db->result($query))   {
+                $options .= '<tr class="mBasketTableRow">';
+                $options .= '<td class="mBasketTableImage"> <img src="resources/images/'.$row->image_name.'.'.$row->image_type.'" height=150px width=150px /> </td>';
+                $options .= '<td class="mBasketTableName">'.$row->item_name.'</td>';
+                $options .= '<td class="mBasketTableQty">'.$row->basket_item_qty.'</td>';
+                $options .= '<td class="mBasketTablePrice"> &#8377; '.$row->item_price.'</td>';
+                $options .= '<td class="mBasketTableTCost"> &#8377; '.((int)$row->basket_item_qty * (int)$row->item_price).'</td>';
+                $options .= '</tr>';
+            }
+            //The Procedure call problem.
+            $db->freeResults($query);
+            $db->reconnect();
+            $query = $db->query("CALL get_total_basket_price({$basketId})");
+            $result = $db->result($query);
+            if($result->total_basket_cost == 'NULL')    {
+                $result = 0;
+            } else {
+                $result = $result->total_basket_cost;
+            }
+            $options .= '<tr><td class="mBasketTableImage"></td><td class="mBasketTableName"> </td> <td class="mBasketTableQty"></td><td class="mBasketTablePrice">Total Cost : </td><td class="mBasketTableTotal">&#8377; '.$result.'</td></tr>';
+        }
+        $options .= '</table>';
+        //The Procedure call problem.
+        $db->freeResults($query);
+        $db->reconnect();
+        
+        echo $options;
+    } elseif(isset($_POST['pendingBasketShow']))    {
+        /*
+         * Page : myBasket.php
+         * Sub Category : Shows the pending baskets details. No image. Instead shipment status.
+         */
+        $basketId = $_POST['pendingBasketShow'];
+        $options = '<table id="mBasketTable">';
+        $query = $db->query("CALL display_basket_items({$basketId})");
+        if($db->numRows($query) <= 0)   {
+            //No items in the basket.
+            $options .= '<tr><td class="centerTableCell"> No items in the Basket </td></tr>';
+            $template->setTemplateVar('canShowBasketPay', '0');
+        } else {
+            while($row = $db->result($query))   {
+                $options .= '<tr class="mBasketTableSRow">';
+                $options .= '<td class="mBasketTableName">'.$row->item_name.'</td>';
+                $options .= '<td class="mBasketTableQty">'.$row->basket_item_qty.'</td>';
+                $options .= '<td class="mBasketTablePrice"> &#8377; '.$row->item_price.'</td>';
+                $options .= '<td class="mBasketTableTCost"> &#8377; '.((int)$row->basket_item_qty * (int)$row->item_price).'</td>';
+                $options .= '<td class="mBasketTableImage">'.($row->basket_item_ship_id != 0 ? 'Shipment Id : '.$row->basket_item_ship_id : 'Shipment Pending.').'</td>';
+                $options .= '</tr>';
+            }
+            //The Procedure call problem.
+            $db->freeResults($query);
+            $db->reconnect();
+            $query = $db->query("CALL get_total_basket_price({$basketId})");
+            $result = $db->result($query);
+            if($result->total_basket_cost == 'NULL')    {
+                $result = 0;
+            } else {
+                $result = $result->total_basket_cost;
+            }
+            $options .= '<tr><td class="mBasketTableName"> </td> <td class="mBasketTableQty"></td><td class="mBasketTablePrice">Total Cost : </td><td class="mBasketTableTotal">&#8377; '.$result.'</td><td class="mBasketTableImage"></td></tr>';
+        }
+        $options .= '</table>';
+        //The Procedure call problem.
+        $db->freeResults($query);
+        $db->reconnect();
+        
+        echo $options;
+    } elseif(isset($_POST['itemRatingValue'], $_POST['itemRatingText']))    {
+        /*
+         * Page : showItem.php
+         * Sub Category : Used to add / update rating from the current user to the desired product.
+         */
+        $itemId = $_POST['itemId'];
+        $itemRatingValue = $db->escapeString(trim($_POST['itemRatingValue']));
+        $itemRatingText = $db->escapeString(trim($_POST['itemRatingText']));
+        
+        /*
+         * 1. Check if the user can actually rate the given item.
+         * 2. Check if the user has already rated the item. If so update the rating.
+         * 3. Else insert a new rating.
+         */
+        // Step 1.
+        if ( $session->isLoggedIn())    {
+            $userId = $session->getUserId();
+            $sql = "SELECT COUNT(`basket_item_id`) as hasBought
+                FROM `{$db->name()}`.`dbms_basket`, 
+                    `{$db->name()}`.`dbms_basket_contains`
+                WHERE `dbms_basket`.`basket_id` = `dbms_basket_contains`.`basket_id` AND
+                        `dbms_basket`.`basket_user_id` = '{$userId}' AND
+                        `dbms_basket_contains`.`basket_item_id` = '{$itemId}'";
+            $query = $db->query($sql);
+            $result = $db->result($query);
+            if($result->hasBought > 0)  { 
+                $sql = "SELECT COUNT(`rating_value`) as hasRated FROM `{$db->name()}`.`dbms_ratings` WHERE `rating_user_id` = '{$session->getUserId()}' AND `rating_item_id` = '{$itemId}'";
+                $query = $db->query($sql);
+                $result = $db->result($query);
+                if ( $result->hasRated >= 1)    { 
+                    //Step 2.
+                    $db->freeResults($query);
+                    $sql = "UPDATE `{$db->name()}`.`dbms_ratings` SET `rating_value` = '{$itemRatingValue}' , `rating_text` = '{$itemRatingText}' WHERE `rating_user_id` = '{$session->getUserId()}' AND `rating_item_id` = '{$itemId}'";
+                    $query = $db->query($sql);
+                    echo 1;
+                } else {
+                    //Step 3.
+                    $userId = $session->getUserId();
+                    $sql = "INSERT INTO `{$db->name()}`.`dbms_ratings` VALUES ({$userId}, {$itemId}, {$itemRatingValue}, '{$itemRatingText}')";
+                    $query = $db->query($sql);
+                    echo 1;
+                }
+            } else {
+                echo -1;
+            }
+        } else {
+            echo -1;
+        }
     }
 ?>

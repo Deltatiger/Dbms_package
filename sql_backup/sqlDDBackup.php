@@ -189,7 +189,68 @@ $sql[14] = "DELIMITER $$
                     END$$
             DELIMITER ;";
 
-for ( $i = 0 ; $i <= 12 ; $i++)   {
+$sql[15] = "DELIMITER $$
+            CREATE TRIGGER `dbms_package`.`updateBaskedStatusToShipped`
+                    AFTER UPDATE ON `dbms_package`.`dbms_basket_contains`
+                    FOR EACH ROW
+                    BEGIN
+                            DECLARE totalItems INT DEFAULT 0;
+                            DECLARE shippedItems INT DEFAULT 0;
+
+                            SELECT COUNT(`basket_item_id`) INTO totalItems
+                                    FROM `dbms_package`.`dbms_basket_contains`
+                                    WHERE `basket_id` = NEW.basket_id;
+                            SELECT COUNT(`basket_item_id`) INTO shippedItems
+                                    FROM `dbms_package`.`dbms_basket_contains`
+                                    WHERE `basket_id` = NEW.basket_id AND
+                                            `basket_item_ship_id` != 0;
+
+                            IF totalItems = shippedItems THEN
+                                    UPDATE `dbms_package`.`dbms_basket` SET `basket_clear` = 1 WHERE `basket_id` = NEW.basket_id;
+                            END IF;
+                    END$$
+            DELIMITER ;";
+
+$sql[16] = "DELIMITER $$
+            CREATE PROCEDURE `dbms_package`.`updateRatingProcedure` ( IN itemID INT)
+            BEGIN
+                    DECLARE avg_ratings DOUBLE;
+
+                    SELECT AVG(`rating_value`) INTO avg_ratings FROM `dbms_package`.`dbms_ratings` WHERE `rating_item_id` = itemID;
+                    UPDATE `dbms_package`.`dbms_item` SET `item_avg_rating` = avg_ratings WHERE `item_id` = itemID;
+            END$$
+            DELIMITER ;";
+
+$sql[17] = "DELIMITER $$
+            CREATE TRIGGER `dbms_package`.`updateRatingStatItemUp`
+                    AFTER UPDATE ON `dbms_package`.`dbms_ratings`
+                    FOR EACH ROW
+                    BEGIN
+                            IF OLD.`rating_value` != NEW.`rating_value` THEN
+                                    CALL updateRatingProcedure(NEW.`rating_item_id`);
+                            END IF;
+                    END$$
+            DELIMITER ;";
+
+$sql[18] = "DELIMITER $$
+            CREATE TRIGGER `dbms_package`.`updateRatingStatItemDel`
+                    AFTER DELETE ON `dbms_package`.`dbms_ratings`
+                    FOR EACH ROW
+                    BEGIN
+                            CALL updateRatingProcedure(OLD.`rating_item_id`);
+                    END$$
+            DELIMITER ;";
+
+$sql[19] = "DELIMITER $$
+            CREATE TRIGGER `dbms_package`.`updateRatingStatItemIns`
+                    AFTER INSERT ON `dbms_package`.`dbms_ratings`
+                    FOR EACH ROW
+                    BEGIN
+                            CALL updateRatingProcedure(NEW.`rating_item_id`);
+                    END$$
+            DELIMITER ;";
+
+for ( $i = 0 ; $i <= 19 ; $i++)   {
     $query = $db->query($sql[$i]);
     echo $query;
 }

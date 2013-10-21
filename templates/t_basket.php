@@ -7,7 +7,7 @@
                 <li> <a href="#" class="mBasketOldLinks" id="currentBasket" data-basketid="<?php $this->printVar('currentBasketId'); ?>"> Current Basket </a> </li>
             </ul>
             <hr />
-            <p class="centerBold">Shipped Baskets</p>
+            <p class="centerBold">Pending Baskets</p>
             <ul class="mBasketSelections">
                 <?php $this->printVar('pendingBaskets'); ?>
             </ul>

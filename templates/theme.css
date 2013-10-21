@@ -276,6 +276,43 @@ body    {
 	margin-bottom: 0px;
 }
 
+#mShowItemUserRating	{
+	width: 700px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#mShowItemUserRating	input[type=text]{
+	width: 400px;
+	vertical-align: middle;
+	background: white;
+	margin-bottom: 0px;
+	margin-left: 20px;
+	color: black;
+}
+
+#mShowItemRatingText	{
+	float: left;
+}
+
+#mShowItemUserRating select	{
+	width: 50px;
+	vertical-align: middle;
+	background: white;
+	margin-bottom: 0px;
+	margin-left: 20px;
+	color: black;
+}
+
+#mShowItemRatingValue	{
+	float: left;
+}
+
+#mShowItemRatingSubmit	{
+	margin-left: 50px;
+	float: left;
+}
+
 /*
  * This is the end of the showItem page.
  */
@@ -444,6 +481,10 @@ body    {
 #mBasketTable tr.mBasketTableRow	{
 	border: 1px solid black;
 	margin: 0px;
+}
+
+#mBasketTable tr.mBasketTableSRow	{
+	height: 40px;
 }
 
 #mBasketTable td.mBasketTableImage	{

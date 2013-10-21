@@ -146,4 +146,49 @@ $(document).ready(function(){
             });
         }
     });
+    
+    $('#currentBasket').on({
+        'click' : function()    {
+            window.location = 'mybasket.php';
+        }
+    });
+    
+    $('.mBasketOldLinks').on({
+        'click' : function()    {
+            //This is used to show a shipped basket details.
+            var basketId = $(this).data('basketid');
+            $.post('ajax/main.php', {shippedBasketShow : basketId}, function(result)    {
+                $('#mBasketRight').html(result);
+            });
+        }
+    });
+    
+    $('.mBasketPendingLinks').on({
+        'click' : function()    {
+            //This is used to show a pending basket details. No image. Insteaad shipped / pending message
+            var basketId = $(this).data('basketid');
+            $.post('ajax/main.php', {pendingBasketShow : basketId}, function(result)    {
+                $('#mBasketRight').html(result);
+            });
+        }
+    });
+    
+    $('#userRatingSubmit').on({
+        'click' : function()    {
+            //This is used to register a rating for the user.
+            var itemId = $('#itemId').val();
+            var itemRatingText = $('#userRatingText').val();
+            var itemRatingValue = $('#userRatingValue').val();
+            $.post('ajax/main.php', {itemRatingValue : itemRatingValue, itemRatingText : itemRatingText, itemId : itemId}, function(result)   {
+                if ( result === '1')   {
+                    alert('Rating Succesfully added / updated.');
+                } else {
+                    alert('Error occoured. Could not add rating. Try again.');
+                }
+                var itemRatingText = $('#userRatingText').val('');
+                var itemRatingValue = $('#userRatingValue').val('');
+                window.location = 'showItem.php?id='+itemId;
+            });
+        }
+    });
 });

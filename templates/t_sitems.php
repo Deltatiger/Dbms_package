@@ -26,17 +26,25 @@
         </div>
 
         <div id="mShowItemUserRating">
-            <?php if ($this->printVar('hasBought'))  {?>
-                Enter your Rating : 
-                <select name="rating" id="userRating">
-                    <option value="0"> 0 </option>
-                    <option value="1"> 1 </option>
-                    <option value="2"> 2 </option>
-                    <option value="3"> 3 </option>
-                    <option value="4"> 4 </option>
-                    <option value="5"> 5 </option>
-                </select>
-                <input type="submit" id="userRatingSubmit" />
+            <?php if ($this->getVar('hasBought'))  {?>
+                <p class="centerBold"> Enter your Rating </p>
+                <div id="mShowItemRatingText">
+                    <input type="text" id="userRatingText" />
+                </div>
+                <div id="mShowItemRatingValue">
+                    <select name="rating" id="userRatingValue">
+                        <option value="0"> 0 </option>
+                        <option value="1"> 1 </option>
+                        <option value="2"> 2 </option>
+                        <option value="3"> 3 </option>
+                        <option value="4"> 4 </option>
+                        <option value="5"> 5 </option>
+                    </select>
+                </div>
+                <div id="mShowItemRatingSubmit">
+                    <input type="submit" id="userRatingSubmit" />
+                </div>
+                <div class="clearDiv"></div>
             <?php } ?>
         </div>
     </div>

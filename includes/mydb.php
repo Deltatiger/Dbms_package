@@ -22,6 +22,10 @@ class DB    {
         mysql_close($this->con);
     }
     
+    public function escapeString($str)  {
+        return mysql_real_escape_string($str);
+    }
+    
     public function freeResults($result)   {
         if(is_a($result, 'mysqli_result'))  {
             mysql_free_result($result);
